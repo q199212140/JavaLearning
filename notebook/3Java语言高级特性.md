@@ -3279,7 +3279,206 @@ java.util.regex开发包，如果不是进行一些更为复杂的正则处理�
 
 
 
-# 第11章：
+# 第11章：国际化程序实现
+
+所谓的国际化的程序指的是同一个程序代码可以根据不同的国家实现不同的语言描述，但是程序处理的核心业务是相同的。
+
+## 国际化问题简介
+
+![image-20200831222513300](3Java语言高级特性/image-20200831222513300.png)
+
+区域和语言
+
+![image-20200831223333273](3Java语言高级特性/image-20200831223333273.png)
+
+![image-20200831223856209](3Java语言高级特性/image-20200831223856209.png)
+
+![image-20200831223936879](3Java语言高级特性/image-20200831223936879.png)
+
+
+
+## Locale类
+
+![image-20200831224127544](3Java语言高级特性/image-20200831224127544-9575060.png)
+
+![image-20200831224257598](3Java语言高级特性/image-20200831224257598.png)
+
+![image-20200831224515647](3Java语言高级特性/image-20200831224515647.png)
+
+![image-20200831224555165](3Java语言高级特性/image-20200831224555165.png)
+
+范例：实例化Locale类对象
+
+```java
+import java.util.Locale;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Locale loc = new Locale("zh","CN"); //中文环境
+        System.out.println(loc);
+    }
+}
+```
+
+手工设置语言
+
+> zh_CN
+
+![image-20200831230647902](3Java语言高级特性/image-20200831230647902.png)
+
+```java
+import java.util.Locale;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Locale loc = Locale.getDefault(); //获取默认环境
+        System.out.println(loc);
+    }
+}
+```
+
+![image-20200831231052099](3Java语言高级特性/image-20200831231052099.png)
+
+```java
+import java.util.Locale;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Locale loc = Locale.CHINA;
+        System.out.println(loc);
+    }
+}
+```
+
+​	使用常量的优势在于可以避免一些区域编码信息的繁琐。
+
+
+
+## 资源文件
+
+![image-20200901231730739](3Java语言高级特性/image-20200901231730739.png)
+
+读取文件使用java.util.ResourceBundle类
+
+>  public abstract class ResourceBundle extends Object
+
+通过静态方法，获取此抽象类的实例
+
+> Public static final ResourceBundle getBundle(String baseName)
+>
+> - baseName：描述资源文件的名称，但没有后缀
+
+根据key读取资源内容
+
+> Public final String getString(String key)
+
+```java
+import java.util.ResourceBundle;
+
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        ResourceBundle resource = ResourceBundle.getBundle("message.Message");
+            String val = resource.getString("info");
+        System.out.println(val);
+    }
+}
+```
+
+
+
+如果中文有乱码
+
+```java
+import java.io.UnsupportedEncodingException;
+import java.util.ResourceBundle;
+
+public class JavaApiDemo {
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        ResourceBundle resource = ResourceBundle.getBundle("message.Message");
+            String val = new String(resource.getString("info").getBytes("ISO-8859-1"),"UTF-8");
+        System.out.println(val);
+    }
+}
+```
+
+也可能是"GBK"，取决于项目编码类型
+
+![image-20200905125855800](3Java语言高级特性/image-20200905125855800.png)
+
+
+
+
+
+## 实现国际化程序
+
+现在国际化程序的实现前期准备已经全部完成了，也就是说依靠资源文件、Locale类，ResourceBandle类就可以实现国际化的处理操作，那么下面来进行国际化的程序实现。（核心关键：读取资源信息）
+
+![image-20200905131955628](3Java语言高级特性/image-20200905131955628.png)
+
+![image-20200906083815918](3Java语言高级特性/image-20200906083815918.png)
+
+![image-20200906083911994](3Java语言高级特性/image-20200906083911994.png)
+
+
+
+## 消息格式化
+
+如果说现在某一位用户登录成功了，那么一般都会显示这样的信息“Xxx，欢迎您的光临！”也就是说这个时候会显示用户名，那么此时如果这些内容保存在了资源文件里面，则就需要通过占位符进行描述，同时对于读取出来的数据需要进行消息格式化的处理。
+
+范例：修改资源文件
+
+| 文件         | 名称                     | 内容                                |
+| ------------ | ------------------------ | ----------------------------------- |
+| 中文资源文件 | Message_zh_CN.properties | info=欢迎{0}的访问，当前日期是{1}！ |
+| 英文资源文件 | Message_en_US.properties | info=Welcome {0}, date: {1} !       |
+
+![image-20200906085146030](3Java语言高级特性/image-20200906085146030.png)
+
+![image-20200906085205948](3Java语言高级特性/image-20200906085205948.png)
+
+![image-20200906085247930](3Java语言高级特性/image-20200906085247930.png)
+
+范例：格式化文本
+
+```java
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.ResourceBundle;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Locale loc = new Locale("en", "US");
+        ResourceBundle resource = ResourceBundle.getBundle("message.Message",loc);
+        String val = resource.getString("info");
+        System.out.println(MessageFormat.format(val,"admin",new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
+    }
+}
+```
+
+> Welcome admin , date: 2020-09-06 !
+
+```java
+import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.ResourceBundle;
+public class JavaApiDemo {
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        Locale loc = new Locale("zh", "CN");
+        ResourceBundle resource = ResourceBundle.getBundle("message.Message",loc);
+        String val = new String(resource.getString("info"). getBytes("ISO-8859-1"),"UTF-8");
+        System.out.println(MessageFormat.format(val,"admin",new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
+    }
+}
+```
+
+对于中文需要用以上方式
+
+> 欢迎admin的访问，当前日期是2020-09-06！
+
+如果在日后开发过程之中见到资源文件里米娜有{0} {1}的结构表示的，都是占位符，该消息一定要进行格式化。
+
+ ![image-20200906090328737](3Java语言高级特性/image-20200906090328737.png)
 
 
 
@@ -3311,6 +3510,220 @@ public class JavaApiDemo {
 在对一些文件进行自动命名处理的情况下，UUID类型非常好用。
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 第13章：比较器
+
+所谓的比较器指的就是进行大小关系的确定判断，下面首先来分析一下比较器存在的意义。
+
+## 比较器问题的引出
+
+![image-20200907203506711](3Java语言高级特性/image-20200907203506711.png)
+
+```java
+import java.util.Arrays;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Integer data[] = new Integer[] {10,9,5,2,20};
+        Arrays.sort(data) ; //进行对象排序 ;
+        System.out.println(Arrays.toString(data));
+    }
+}
+```
+
+> [2, 5, 9, 10, 20]
+
+同样给定String类型的对象数组排序
+
+范例：
+
+```java
+import java.util.Arrays;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        String data[] = new String[] {"X","B","A","E","G"};
+        Arrays.sort(data) ; //进行对象排序 ;
+        System.out.println(Arrays.toString(data));
+    }
+}
+```
+
+> [A, B, E, G, X]
+
+![image-20200907210835012](3Java语言高级特性/image-20200907210835012.png)
+
+```java
+import java.util.Arrays;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Person data [] = new Person[] {
+            new Person("小强A", 80),
+            new Person("小强B", 50),
+            new Person("小强C", 100)};
+        Arrays.sort(data);
+        System.out.println(Arrays.toString(data));
+    }
+}
+class Person {
+    private String name;
+    private int age;
+    public Person(String name,int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    //无参构造 setter getter略
+    @Override
+    public String toString() {
+        return "【Person类对象】姓名：" + this.name + "、年龄：" + this.age + "\n";
+    }
+}
+```
+
+> Exception in thread "main" java.lang.ClassCastException: com.mldn.demo.java3.Person cannot be cast to java.lang.Comparable
+> 	at java.util.ComparableTimSort.countRunAndMakeAscending(ComparableTimSort.java:320)
+> 	at java.util.ComparableTimSort.sort(ComparableTimSort.java:188)
+> 	at java.util.Arrays.sort(Arrays.java:1246)
+> 	at com.mldn.demo.java3.JavaApiDemo.main(JavaApiDemo.java:114)
+
+人意的一个类默认情况下是无法使用系统内部的类实现数组排序或比较需求的。是因为没有明确的指定出到底应该如果进行比较的定义（没有比较规则），那么这个时候在java里面为了统一比较规则的定义，所以提供有比较器的借口：Comparable借口
+
+
+
+## Comparable比较器
+
+![image-20200907212439767](3Java语言高级特性/image-20200907212439767.png)
+
+默认很多类实现该接口，不用记
+
+![image-20200907212324614](3Java语言高级特性/image-20200907212324614.png)
+
+
+
+范例：实现自定义对象数组的排序
+
+```java
+import java.util.Arrays;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Person data [] = new Person[] {
+            new Person("小强A", 80),
+            new Person("小强B", 50),
+            new Person("小强C", 100)};
+        Arrays.sort(data);
+        System.out.println(Arrays.toString(data));
+    }
+}
+class Person implements Comparable<Person>{
+    private String name;
+    private int age;
+    public Person(String name,int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    //无参构造 setter getter略
+    @Override
+    public String toString() {
+        return "【Person类对象】姓名：" + this.name + "、年龄：" + this.age + "\n";
+    }
+
+    @Override
+    public int compareTo(Person per) {
+        return this.age - per.age;
+    }
+}
+```
+
+一般排序是说升序
+
+> [【Person类对象】姓名：小强B、年龄：50
+> , 【Person类对象】姓名：小强A、年龄：80
+> , 【Person类对象】姓名：小强C、年龄：100
+> ]
+
+
+
+## Comparator比较器
+
+![image-20200907213035977](3Java语言高级特性/image-20200907213035977.png)
+
+后来经过若干个版本的迭代更新之后需要对Person类进行排序处理，但是又不能去修改Person（无法实现Comparable接口）所以这个时候需要采用一种挽救的形式来实现比较。在Arrays类里面排序有另一种实现。
+
+![image-20200907213514502](3Java语言高级特性/image-20200907213514502.png)
+
+![image-20200907213707700](3Java语言高级特性/image-20200907213707700.png)
+
+![image-20200907213934895](3Java语言高级特性/image-20200907213934895.png)
+
+![image-20200907214042524](3Java语言高级特性/image-20200907214042524.png)
+
+
+
+## 二叉树结构
+
+![image-20200907214113797](3Java语言高级特性/image-20200907214113797.png)
+
+如果要实现一棵树的结构等定义，那么就需要去考虑数据存储形式，在二叉树等实现之中其基本的实现原理如下：取第一个数据为保存的根结点，小于根结点的放在节点左子树，大于的放右边
+
+![image-20200907215034664](3Java语言高级特性/image-20200907215034664.png)
+
+![image-20200907215049635](3Java语言高级特性/image-20200907215049635.png)
+
+
+
+## 二叉树的基础实现
+
+![image-20200907215535279](3Java语言高级特性/image-20200907215535279.png)
+
+```java
+class Person implements Comparable<Person>{
+    private String name;
+    private int age;
+    public Person(String name,int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    //无参构造 setter getter略
+    @Override
+    public String toString() {
+        return "【Person类对象】姓名：" + this.name + "、年龄：" + this.age + "\n";
+    }
+
+    @Override
+    public int compareTo(Person per) {
+        return this.age - per.age;
+    }
+}
+```
+
+随后如果要想进行数据的保存，首先一定需要有一个节点类。节点类里面由于牵扯到数据的保存问题，所以必须使用Comparable
 
 
 
