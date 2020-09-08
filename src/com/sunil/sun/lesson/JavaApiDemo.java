@@ -557,9 +557,82 @@ import java.util.UUID;
 //}
 
 /*
-11.42 TODO
+11.42 国际性程序实现原理
+ */
+//import java.util.Locale;
+//public class JavaApiDemo {
+//    public static void main(String[] args) {
+//        Locale loc = new Locale("zh","CN"); //中文环境
+//        System.out.println(loc);
+//    }
+//}
+
+/*
+import java.util.Locale;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Locale loc = Locale.CHINA;
+        System.out.println(loc);
+    }
+}
+*/
+
+
+
+/*
+11.44 配置文件
  */
 
+/*
+import java.util.ResourceBundle;
+
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        ResourceBundle resource = ResourceBundle.getBundle("message.Message");
+            String val = resource.getString("info");
+        System.out.println(val);
+    }
+}
+*/
+
+/*
+import java.io.UnsupportedEncodingException;
+import java.util.ResourceBundle;
+
+public class JavaApiDemo {
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        ResourceBundle resource = ResourceBundle.getBundle("message.Message");
+        String val = new String(resource.getString("info").getBytes("ISO-8859-1"),"UTF-8");
+        System.out.println(val);
+    }
+}
+
+*/
+
+/*
+11.45 国际化程序实现
+ */
+
+/*
+11.46 消息格式化
+ */
+
+/*
+import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.ResourceBundle;
+public class JavaApiDemo {
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        Locale loc = new Locale("zh", "CN");
+        ResourceBundle resource = ResourceBundle.getBundle("message.Message",loc);
+        String val = new String(resource.getString("info"). getBytes("ISO-8859-1"),"UTF-8");
+        System.out.println(MessageFormat.format(val,"admin",new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
+    }
+}
+*/
 
 
 
@@ -569,9 +642,137 @@ import java.util.UUID;
 /*
 12.47 UUID类
  */
+/*
 public class JavaApiDemo {
     public static void main(String[] args) throws ParseException {
         UUID uid = UUID.randomUUID();
         System.out.println(uid.toString());
+    }
+}
+
+ */
+
+
+/*
+13.52 比较器
+ */
+/*
+import java.util.Arrays;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Integer data[] = new Integer[] {10,9,5,2,20};
+        Arrays.sort(data) ; //进行对象排序 ;
+        System.out.println(Arrays.toString(data));
+    }
+}
+
+ */
+
+/*
+import java.util.Arrays;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        String data[] = new String[] {"X","B","A","E","G"};
+        Arrays.sort(data) ; //进行对象排序 ;
+        System.out.println(Arrays.toString(data));
+    }
+}
+
+ */
+
+/*
+import java.util.Arrays;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Person data [] = new Person[] {
+            new Person("小强A", 80),
+            new Person("小强B", 50),
+            new Person("小强C", 100)};
+        Arrays.sort(data);
+        System.out.println(Arrays.toString(data));
+    }
+}
+class Person {
+    private String name;
+    private int age;
+    public Person(String name,int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    //无参构造 setter getter略
+    @Override
+    public String toString() {
+        return "【Person类对象】姓名：" + this.name + "、年龄：" + this.age + "\n";
+    }
+}
+
+ */
+
+/*
+import java.util.Arrays;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Person data [] = new Person[] {
+            new Person("小强A", 80),
+            new Person("小强B", 50),
+            new Person("小强C", 100)};
+        Arrays.sort(data);
+        System.out.println(Arrays.toString(data));
+    }
+}
+class Person implements Comparable<Person>{
+    private String name;
+    private int age;
+    public Person(String name,int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    //无参构造 setter getter略
+    @Override
+    public String toString() {
+        return "【Person类对象】姓名：" + this.name + "、年龄：" + this.age + "\n";
+    }
+
+    @Override
+    public int compareTo(Person per) {
+        return this.age - per.age;
+    }
+}
+
+ */
+
+
+/*
+13.56 二叉树基础实现
+ */
+
+public class JavaApiDemo {
+
+    public static void main(String[] args) {
+
+    }
+}
+class BinaryTree<T extends Comparable<T>> {
+    private class Node {
+        private Comparable<T> data; //保存Comparable，可以比较大小
+        private Node parent; //保存父节点
+        private Node left; //保存左子树
+        private Node right;  //保存右子树
+        public Node(Comparable<T> data) { //构造方法直接负责进行数据的存储
+            this.data = data;
+        }
+        /**
+         * 实现节点数据的适当位置的存储
+         * @param newNode 创建的新节点
+         */
+        public void addNode(Node newNode) {
+            if(newNode.data.compareTo((T) this.data) <= 0) {
+
+            }
+        }
+
+
     }
 }
