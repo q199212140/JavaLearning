@@ -1,69 +1,69 @@
 package cn.mldn.util;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-
-public class ClassLoader4ClassLoaderDemo extends ClassLoader
-{
-    private static final String MESSAGE_CLASS_PATH_6_116 = "D:" + File.separator + "test" + File.separator  + "Message4ClassLoader.class";
-    /**
-     * ½øÐÐÖ¸¶¨ÀàµÄ¼ÓÔØ
-     * @param className ÍêÕûÃû³Æ  °ü.ÀàÃû³Æ
-     * @return Ö¸¶¨µÄÀà¶ÔÏó
-     * @throws Exception Èç¹ûÀàÎÄ¼þ²»´æÔÚ£¬ÔòÎÞ·¨¼ÓÔØ
-     */
-    public Class<?> loadData(String className) throws Exception
-    {
-        byte [] data = this.loadClassData();
-        
-        if(data != null)
-        {
-            return super.defineClass(className, data, 0, data.length);
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Í¨¹ýÎÄ¼þ½øÐÐÀà¼ÓÔØ
-     * @return
-     * @throws Exception
-     */
-    private byte [] loadClassData() throws Exception
-    {
-        InputStream input = null;
-        ByteArrayOutputStream bos = null;//½«Êý¾Ý¼ÓÔØµ½ÄÚ´æÖÐ
-        byte data[] = null;
-        
-        try
-        {
-            //ÊµÀý»¯ÄÚ´æÁ÷
-            bos = new ByteArrayOutputStream();
-            
-            //ÎÄ¼þÁ÷¼ÓÔØ
-            System.out.println("FileInputStream:" + MESSAGE_CLASS_PATH_6_116);
-            input = new FileInputStream(new File(MESSAGE_CLASS_PATH_6_116));
-            input.transferTo(bos);
-            
-            data = bos.toByteArray();
-        }catch(Exception e)
-        {
-            e.printStackTrace();
-        }finally
-        {
-            if(input != null)
-            {
-                input.close();
-            }
-            if(bos != null)
-            {
-                bos.close();
-            }
-            
-        }
-        System.out.println("return data:");
-        return data;
-    }
-}
+//
+//import java.io.ByteArrayOutputStream;
+//import java.io.File;
+//import java.io.FileInputStream;
+//import java.io.InputStream;
+//
+//public class ClassLoader4ClassLoaderDemo extends ClassLoader
+//{
+//    private static final String MESSAGE_CLASS_PATH_6_116 = "D:" + File.separator + "test" + File.separator  + "Message4ClassLoader.class";
+//    /**
+//     * ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
+//     * @param className ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//     * @return Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//     * @throws Exception ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½
+//     */
+//    public Class<?> loadData(String className) throws Exception
+//    {
+//        byte [] data = this.loadClassData();
+//
+//        if(data != null)
+//        {
+//            return super.defineClass(className, data, 0, data.length);
+//        }
+//
+//        return null;
+//    }
+//
+//    /**
+//     * Í¨ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//     * @return
+//     * @throws Exception
+//     */
+//    private byte [] loadClassData() throws Exception
+//    {
+//        InputStream input = null;
+//        ByteArrayOutputStream bos = null;//ï¿½ï¿½ï¿½ï¿½ï¿½Ý¼ï¿½ï¿½Øµï¿½ï¿½Ú´ï¿½ï¿½ï¿½
+//        byte data[] = null;
+//
+//        try
+//        {
+//            //Êµï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½
+//            bos = new ByteArrayOutputStream();
+//
+//            //ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//            System.out.println("FileInputStream:" + MESSAGE_CLASS_PATH_6_116);
+//            input = new FileInputStream(new File(MESSAGE_CLASS_PATH_6_116));
+//            input.transferTo(bos);
+//
+//            data = bos.toByteArray();
+//        }catch(Exception e)
+//        {
+//            e.printStackTrace();
+//        }finally
+//        {
+//            if(input != null)
+//            {
+//                input.close();
+//            }
+//            if(bos != null)
+//            {
+//                bos.close();
+//            }
+//
+//        }
+//        System.out.println("return data:");
+//        return data;
+//    }
+//}

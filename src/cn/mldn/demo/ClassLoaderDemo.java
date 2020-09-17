@@ -1,40 +1,40 @@
 package cn.mldn.demo;
-
-import java.lang.reflect.Method;
-
-import cn.mldn.util.ClassLoader4ClassLoaderDemo;
-
-class Message4ClassLoaderDemo
-{
-}
-
-public class ClassLoaderDemo
-{
-    public static void main(String[] args) throws Exception
-    {
-        System.out.println("Lesson 6.115 ClassLoaderÀà¼ÓÔØÆ÷¼ò½é:Àà¼ÓÔØÆ÷ÔÚ²»Í¬°æ±¾Ö®¼äÓÐ²îÒì");
-        
-        Class<?> clazz = Message4ClassLoaderDemo.class;
-                
-        //»ñÈ¡µ±Ç°Àà¼ÓÔØÆ÷
-        System.out.println(clazz.getClassLoader());//sun.misc.Launcher$AppClassLoader@73d16e93   Ó¦ÓÃ³ÌÐò¼ÓÔØÆ÷
-        
-        //»ñÈ¡¸¸Àà¼ÓÔØÆ÷
-        System.out.println(clazz.getClassLoader().getParent());//sun.misc.Launcher$ExtClassLoader@15db9742 Æ½Ì¨Àà¼ÓÔØÆ÷£»JDK1.8¼°ÒÔÇ°³ÆÎªÀ©Õ¹Àà¼ÓÔØÆ÷£¬extÄ¿Â¼
-               
-        //»ñÈ¡×æ¸¸Àà¼ÓÔØÆ÷
-        System.out.println(clazz.getClassLoader().getParent().getParent());//null
-        
-        
-        System.out.println("\n\nLesson 6.116 ×Ô¶¨ÒåClassLoader´¦ÀíÀà");
-        ClassLoader4ClassLoaderDemo selfClassLoader = new ClassLoader4ClassLoaderDemo();
-        Class<?> cls = selfClassLoader.loadData("cn.mldn.util.Message4ClassLoader");
-        
-        System.out.println(cls);
-        
-        Object obj = cls.getDeclaredConstructor().newInstance();
-        Method method = cls.getDeclaredMethod("send");
-        method.invoke(obj);
-        
-    }
-}
+//
+//import java.lang.reflect.Method;
+//
+//import cn.mldn.util.ClassLoader4ClassLoaderDemo;
+//
+//class Message4ClassLoaderDemo
+//{
+//}
+//
+//public class ClassLoaderDemo
+//{
+//    public static void main(String[] args) throws Exception
+//    {
+//        System.out.println("Lesson 6.115 ClassLoaderï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½Í¬ï¿½æ±¾Ö®ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½");
+//
+//        Class<?> clazz = Message4ClassLoaderDemo.class;
+//
+//        //ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//        System.out.println(clazz.getClassLoader());//sun.misc.Launcher$AppClassLoader@73d16e93   Ó¦ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//
+//        //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//        System.out.println(clazz.getClassLoader().getParent());//sun.misc.Launcher$ExtClassLoader@15db9742 Æ½Ì¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½JDK1.8ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½Îªï¿½ï¿½Õ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½extÄ¿Â¼
+//
+//        //ï¿½ï¿½È¡ï¿½æ¸¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//        System.out.println(clazz.getClassLoader().getParent().getParent());//null
+//
+//
+//        System.out.println("\n\nLesson 6.116 ï¿½Ô¶ï¿½ï¿½ï¿½ClassLoaderï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
+//        ClassLoader4ClassLoaderDemo selfClassLoader = new ClassLoader4ClassLoaderDemo();
+//        Class<?> cls = selfClassLoader.loadData("cn.mldn.util.Message4ClassLoader");
+//
+//        System.out.println(cls);
+//
+//        Object obj = cls.getDeclaredConstructor().newInstance();
+//        Method method = cls.getDeclaredMethod("send");
+//        method.invoke(obj);
+//
+//    }
+//}

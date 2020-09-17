@@ -1,20 +1,20 @@
 package cn.mldn.demo;
-
-import java.util.List;
-
-public class ListInterfaceIntroductionDemo
-{
-    public static void main(String[] args)
-    {
-        System.out.println("Lesson 6.125 List½Ó¿Ú¼ò½é");
-        
-        List<String> all = List.of("Hello", "ÄãºÃ", "¶öÁËÃ´", "World", "£¡");
-        System.out.println(all);
-        
-        Object result[] = all.toArray();
-        for(Object temp : result)
-        {
-            System.out.print(temp + "¡¢");
-        }
-    }
-}
+//
+//import java.util.List;
+//
+//public class ListInterfaceIntroductionDemo
+//{
+//    public static void main(String[] args)
+//    {
+//        System.out.println("Lesson 6.125 Listï¿½Ó¿Ú¼ï¿½ï¿½");
+//
+//        List<String> all = List.of("Hello", "ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½Ã´", "World", "ï¿½ï¿½");
+//        System.out.println(all);
+//
+//        Object result[] = all.toArray();
+//        for(Object temp : result)
+//        {
+//            System.out.print(temp + "ï¿½ï¿½");
+//        }
+//    }
+//}

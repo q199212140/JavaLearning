@@ -1,14 +1,14 @@
 package cn.mldn.demo;
 
-import java.util.Set;
-
-public class SetDemo
-{
-    public static void main(String[] args)
-    {
-        System.out.println("Lesson 6.130 Set½Ó¿Ú¼ò½é£º");
-        
-        //Set¼¯ºÏÊý¾Ý±£´æ£¬ÉèÖÃÖØ¸´ÄÚÈÝ JDK1.9Ö§³Ö
-        Set<String> all = Set.of("Hello", "Hello1", "world", "!", "!!");
-    }
-}
+//import java.util.Set;
+//
+//public class SetDemo
+//{
+//    public static void main(String[] args)
+//    {
+//        System.out.println("Lesson 6.130 Setï¿½Ó¿Ú¼ï¿½é£º");
+//
+//        //Setï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý±ï¿½ï¿½æ£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½ JDK1.9Ö§ï¿½ï¿½
+//        Set<String> all = Set.of("Hello", "Hello1", "world", "!", "!!");
+//    }
+//}
