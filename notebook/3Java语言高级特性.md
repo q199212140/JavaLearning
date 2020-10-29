@@ -1,4 +1,4 @@
-# 第1章：Java多线程编程
+ 第1章：Java多线程编程
 
 ## 2.进程与线程
 
@@ -4253,3 +4253,765 @@ class Person implements Comparable<Person>{
 > ]
 
 这种数据结构的删除操作是十分繁琐的，不是必要的情况下不建议使用删除。
+
+
+
+## 红黑树原理分析
+
+通过整个的二叉树实现相信已经可以清楚二叉树的主要特点：数据查询的时候可以提供更好的查询性能，但是这种原始的二叉树的结构是有明显缺陷的，例如：当二叉树结构改变的时候（增加或删除）就有可能出现不平衡的问题
+
+![image-20200919142219874](3Java语言高级特性/image-20200919142219874.png)
+
+![image-20200919142324467](3Java语言高级特性/image-20200919142324467.png)
+
+![image-20200919142418843](3Java语言高级特性/image-20200919142418843.png)
+
+
+
+![image-20200919142449483](3Java语言高级特性/image-20200919142449483.png)
+
+![image-20200919142742404](3Java语言高级特性/image-20200919142742404.png)
+
+
+
+![image-20200919142931443](3Java语言高级特性/image-20200919142931443.png)
+
+![image-20200919143131201](3Java语言高级特性/image-20200919143131201.png)
+
+
+
+![image-20200919143635309](3Java语言高级特性/image-20200919143635309.png)
+
+![image-20200919144017541](3Java语言高级特性/image-20200919144017541.png)
+
+![image-20200919144125093](3Java语言高级特性/image-20200919144125093.png)
+
+红红相连需变色
+
+![image-20200919144352711](3Java语言高级特性/image-20200919144352711.png)
+
+
+
+## 数据插入平衡修复
+
+![image-20200919144554054](3Java语言高级特性/image-20200919144554054.png)
+
+![image-20200919144653420](3Java语言高级特性/image-20200919144653420.png)
+
+![image-20200919144934582](3Java语言高级特性/image-20200919144934582.png)
+
+50是局部的根，不是root
+
+
+
+![image-20200919145352034](3Java语言高级特性/image-20200919145352034.png)
+
+
+
+![image-20200919145507839](3Java语言高级特性/image-20200919145507839.png)
+
+
+
+![image-20200919145704072](3Java语言高级特性/image-20200919145704072.png)
+
+
+
+![image-20200919145835763](3Java语言高级特性/image-20200919145835763.png)
+
+
+
+![image-20200919145950851](3Java语言高级特性/image-20200919145950851.png)
+
+
+
+![image-20200919150057157](3Java语言高级特性/image-20200919150057157.png)
+
+
+
+![image-20200919150210447](3Java语言高级特性/image-20200919150210447.png)
+
+
+
+![image-20200919150413576](3Java语言高级特性/image-20200919150413576.png)
+
+
+
+![image-20200919150859164](3Java语言高级特性/image-20200919150859164.png)
+
+
+
+![image-20200919151114008](3Java语言高级特性/image-20200919151114008.png)
+
+
+
+![image-20200919151230249](3Java语言高级特性/image-20200919151230249.png)
+
+
+
+![image-20200919151519913](3Java语言高级特性/image-20200919151519913.png)
+
+
+
+![image-20200919151607094](3Java语言高级特性/image-20200919151607094.png)
+
+
+
+![image-20200919151712904](3Java语言高级特性/image-20200919151712904.png)
+
+
+
+![image-20200919151825538](3Java语言高级特性/image-20200919151825538.png)
+
+
+
+![image-20200919151917349](3Java语言高级特性/image-20200919151917349.png)
+
+
+
+![image-20200919152054176](3Java语言高级特性/image-20200919152054176.png)
+
+
+
+## 总结
+
+![image-20200919152134976](3Java语言高级特性/image-20200919152134976.png)
+
+
+
+# 第14章：类库使用案例分析
+
+## 类库案例分析一：StringBuffer使用
+
+![image-20200919214614157](3Java语言高级特性/image-20200919214614157.png)
+
+```java
+public class JavaApiDemo {
+
+    public static void main(String[] args) {
+        StringBuffer buf = new StringBuffer();
+        for (int i = 'a'; i <= 'z'; i++) { //直接循环设置
+            buf.append((char) i);  //保存字符
+        }
+        buf.reverse().delete(0,5);  //反转处理
+        System.out.println(buf);
+    }
+}
+```
+
+![image-20200919215208502](3Java语言高级特性/image-20200919215208502.png)
+
+
+
+## 类库案例分析二：随机数组
+
+利用Random类随机产生5个1～30之间（包括1和30）的随机整数。
+
+Random产生随机数的操作之中会包含有数字0，所以此时不应该存在有数字0的问题。
+
+```java
+import java.util.Arrays;
+import java.util.Random;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        int result [] = NumberFactory.create(5);
+        System.out.println(Arrays.toString(result));
+    }
+}
+class NumberFactory {
+    private static Random random = new Random();
+    /**
+     * 通过随机数来生成一个数组的内容，该内容不包括有0
+     * @param len 要开辟的数组大小
+     * @return 包含有随机数的内容
+     */
+    public static int[] create(int len) {
+        int data [] = new int[len]; //开辟新的数组
+        int foot = 0;
+        while(foot < data.length) {
+            int num =random.nextInt(30);
+            if(num != 0) {
+                data[foot ++] = num;  //保存数据
+            }
+        }
+        return data;
+    }
+}
+```
+
+> [10, 28, 12, 24, 17]
+
+## 案例分析三：Email验证
+
+![image-20200919230520254](3Java语言高级特性/image-20200919230520254.png)
+
+![image-20200919230741719](3Java语言高级特性/image-20200919230741719.png)
+
+
+
+![image-20200919230854611](3Java语言高级特性/image-20200919230854611.png)
+
+
+
+## 案例分析四：抛硬币
+
+![image-20200919231227405](3Java语言高级特性/image-20200919231227405.png)
+
+![image-20200919231247539](3Java语言高级特性/image-20200919231247539.png)
+
+![image-20200919231311863](3Java语言高级特性/image-20200919231311863.png)
+
+
+
+## 案例分析五：IP验证
+
+编写正则表达式，判断给定的是否是一个合法的ip地址
+
+ip地址的组成就是数字，对于数字的组成有一个基础的要求，第一位是无、1、2，后面的内容可以为0-9
+
+![image-20200919232047430](3Java语言高级特性/image-20200919232047430.png)
+
+![image-20200919232101999](3Java语言高级特性/image-20200919232101999.png)
+
+
+
+## 案例分析六：HTML拆分
+
+![image-20200919232927112](3Java语言高级特性/image-20200919232927112.png)
+
+![image-20200919233100573](3Java语言高级特性/image-20200919233100573.png)
+
+
+
+![image-20200919233321945](3Java语言高级特性/image-20200919233321945.png)
+
+## 案例分析七：国家代码
+
+![image-20200919233925555](3Java语言高级特性/image-20200919233925555.png)
+
+![image-20200919234005587](3Java语言高级特性/image-20200919234005587.png)
+
+![image-20200919234136247](3Java语言高级特性/image-20200919234136247.png)
+
+
+
+## 案例分析八：学生信息比较
+
+![image-20200919234427479](3Java语言高级特性/image-20200919234427479.png)
+
+![image-20200919234514897](3Java语言高级特性/image-20200919234514897.png)
+
+![image-20200919234543629](3Java语言高级特性/image-20200919234543629.png)
+
+![image-20200919234557625](3Java语言高级特性/image-20200919234557625.png)
+
+![image-20200919234615090](3Java语言高级特性/image-20200919234615090.png)
+
+
+
+# 第15章：文件操作
+
+在java语言里面提供有对文件操作系统操作的支持，而这个支持就在java.io.File类中进行了定义，也就是在整个java.io包里面，File类是唯一一个与文件本身操作（创建、删除、重命名等）有关的类，而如果要想进行File类的操作，必须要提供有完整的路径，而后可以调用相应的方法进行处理。
+
+
+
+## File类基本操作
+
+![image-20200921205704637](3Java语言高级特性/image-20200921205704637.png)
+
+
+
+范例：使用File类创建一个文件（/usr/test.txt），（File类只操作文件，不操作内容）
+
+```java
+public class JavaApiDemo {
+    public static void main(String[] args) throws Exception{
+        
+        File file = new File("/Users/lifei/test.txt");
+        //File file = new File("d:\\test.txt");
+        System.out.println(file.createNewFile());  //创建新的文件
+    }
+}
+```
+
+> true
+
+```java
+public class JavaApiDemo {
+    public static void main(String[] args) throws Exception{
+        File file = new File("/Users/lifei/test.txt");
+        if(file.exists()) {
+            file.delete();   //删除文件
+        } else {  //文件不存在
+            System.out.println(file.createNewFile());  //创建新的文件
+        }
+    }
+}
+```
+
+
+
+## File类操作深入
+
+![image-20200921213215851](3Java语言高级特性/image-20200921213215851.png)
+
+separator是小写，历史遗留问题
+
+
+
+范例：正常的路径编写
+
+![image-20200921213534182](3Java语言高级特性/image-20200921213534182.png)
+
+2、在进行File类进行文件处理的时候需要注意的是：程序-->JVM -->操作系统函数 -->文件处理，所以在进行同一文件反复删除或者创建的时候有可能会出现有延迟的问题，所以这个时候最好的方案就是别重名；
+
+3、在进行文件创建的时候又一个重要的前提：文件等父路径必须首先存在
+
+![image-20200921213828586](3Java语言高级特性/image-20200921213828586.png)
+
+如果不存在
+
+> Exception in thread "main" java.io.IOException: No such file or directory
+> 	at java.io.UnixFileSystem.createFileExclusively(Native Method)
+> 	at java.io.File.createNewFile(File.java:1012)
+> 	at com.sunil.sun.lesson.JavaApiDemo.main(JavaApiDemo.java:1210)
+
+
+
+```java
+public class JavaApiDemo {
+    public static void main(String[] args) throws Exception {
+        File file = new File(
+            File.separator + "Users" + File.separator + "lifei" + File.separator + "dir1" + File.separator + "dir2"
+                + File.separator + "test.txt");
+        if (!file.getParentFile().exists()) {  //父路径不存在
+            file.getParentFile().mkdirs();   //创建父路径
+        }
+        if (file.exists()) {
+            file.delete();
+        } else {  //文件不存在
+            System.out.println(file.createNewFile());  //创建新的文件
+        }
+    }
+}
+```
+
+![image-20200921214627534](3Java语言高级特性/image-20200921214627534.png)
+
+
+
+## 获取文件信息
+
+![image-20200921214854459](3Java语言高级特性/image-20200921214854459.png)
+
+```java
+public class JavaApiDemo {
+    public static void main(String[] args) throws Exception {
+        File file = new File(
+            File.separator + "Users" + File.separator + "lifei" + File.separator + "test.txt");
+        System.out.println("文件是否可读：" + file.canRead());
+        System.out.println("文件是否可写：" + file.canWrite());
+        System.out.println("文件大小：" + MathUtil.round(file.length() / (double) 1024 / 1024, 2));
+        System.out
+            .println("最后的修改时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(file.lastModified())));
+        System.out.println("是目录吗？ " + file.isDirectory());
+        System.out.println("是文件吗？ " + file.isFile());
+    }
+}
+
+class MathUtil {
+
+    private MathUtil() {
+    }
+
+    public static double round(double num, int scale) {
+        return Math.round(Math.pow(10, scale) * num) / Math.pow(10, scale);
+    }
+
+}
+```
+
+> 文件是否可读：true
+> 文件是否可写：true
+> 文件大小：0.17
+> 最后的修改时间：2019-12-18 23:50:33
+> 是目录吗？ false
+> 是文件吗？ true
+
+
+
+```java
+public class JavaApiDemo {
+
+    public static void main(String[] args) {
+        File file = new File(File.separator + "Users" + File.separator + "lifei" + File.separator);
+        if(file.isDirectory()) {
+            File result[] = file.listFiles(); //列出目录全部内容
+            for (int i = 0; i < result.length; i++) {
+                System.out.println(result[i]);
+            }
+        }
+
+    }
+}
+```
+
+这些信息的获得都是文件或目录第本身，不涉及到内容处理
+
+> /Users/lifei/Postman
+> /Users/lifei/Public
+> /Users/lifei/PycharmProjects
+> /Users/lifei/repository
+> /Users/lifei/test.txt
+>
+> ...
+
+## 列出目录结构
+
+![image-20200921220907252](3Java语言高级特性/image-20200921220907252.png)
+
+范例：程序实现
+
+```java
+public class JavaApiDemo {
+
+    public static void main(String[] args) {
+        File file = new File("/Users/lifei/");
+        listDir(file);
+    }
+
+    public static void listDir(File file) {
+        if(file.isDirectory()) { //是一个目录
+            File results [] = file.listFiles();  //列出目录中的全部内容
+            if(results != null) {
+                for (int i = 0; i < results.length; i++) {
+                    listDir(results[i]);   //继续依次判断
+                }
+            }
+        }
+        System.out.println(file);  //获得完整路径
+
+    }
+}
+```
+
+如果将路径输出变为删除操作，那么就彻底删除路径。（删D:\\\  盘符都没了？）
+
+
+
+## 综合案例：文件批量更名
+
+![image-20200921221953262](3Java语言高级特性/image-20200921221953262.png)
+
+![image-20200921222012915](3Java语言高级特性/image-20200921222012915.png)
+
+```java
+public class JavaApiDemo {
+
+    public static void main(String[] args) throws Exception {
+        File file = new File("/Users/lifei/repository");   //是一个目录
+        renameDir(file);
+    }
+    public static void renameDir(File file) {
+        if(file.isDirectory()) { //是一个目录
+            File results [] = file.listFiles();  //列出目录中内容
+            if(results != null ) {
+                for (int i = 0; i < results.length; i++) {
+                    renameDir(results[i]);
+                }
+            }
+        } else if (file.isFile()) {
+            String fileName = null;
+            if(file.getName().contains(".")) {
+                fileName = file.getName().substring(0,file.getName().lastIndexOf(".")) + ".txt";
+            } else {
+                fileName = file.getName() + ".txt";
+            }
+            File newFile = new File(file.getParentFile(),fileName);  //新的文件名
+            file.renameTo(newFile);   //重命名
+        }
+    }
+}
+```
+
+
+
+
+
+## 转换流
+
+![image-20201029212001961](3Java语言高级特性/image-20201029212001961.png)
+
+![image-20201029212025250](3Java语言高级特性/image-20201029212025250.png)
+
+
+
+![image-20201029212212234](3Java语言高级特性/image-20201029212212234.png)
+
+
+
+观察转换
+
+
+
+![image-20201029212114676](3Java语言高级特性/image-20201029212114676.png)
+
+![image-20201029212349570](3Java语言高级特性/image-20201029212349570.png)
+
+
+
+![image-20201029212502665](3Java语言高级特性/image-20201029212502665.png)
+
+
+
+![image-20201029212655459](3Java语言高级特性/image-20201029212655459.png)
+
+![image-20201029212726675](3Java语言高级特性/image-20201029212726675.png)
+
+字符流适合处理中文，是由于缓存的存在
+
+所谓的缓存都是指的程序中间的一道数据缓冲区
+
+![image-20201029213035143](3Java语言高级特性/image-20201029213035143.png)
+
+真实存储方式：字节
+
+
+
+
+
+## 综合实战：文件拷贝
+
+![image-20201029213145877](3Java语言高级特性/image-20201029213145877.png)
+
+范例
+
+
+
+![image-20201029213540624](3Java语言高级特性/image-20201029213540624.png)
+
+原方法  do while
+
+
+
+
+
+![image-20201029213921856](3Java语言高级特性/image-20201029213921856.png)
+
+![image-20201029214007978](3Java语言高级特性/image-20201029214007978.png)
+
+![image-20201029214022857](3Java语言高级特性/image-20201029214022857.png)
+
+
+
+![image-20201029214111937](3Java语言高级特性/image-20201029214111937.png)
+
+
+
+  ![image-20201029214313863](3Java语言高级特性/image-20201029214313863.png)
+
+速度比while快
+
+![image-20201029214336694](3Java语言高级特性/image-20201029214336694.png)
+
+
+
+![image-20201029214412546](3Java语言高级特性/image-20201029214412546.png)
+
+![image-20201029214446606](3Java语言高级特性/image-20201029214446606.png)
+
+![image-20201029214510016](3Java语言高级特性/image-20201029214510016.png)
+
+![image-20201029214524857](3Java语言高级特性/image-20201029214524857.png)
+
+![image-20201029214535313](3Java语言高级特性/image-20201029214535313.png)
+
+![image-20201029214551797](3Java语言高级特性/image-20201029214551797.png)
+
+![image-20201029215031253](3Java语言高级特性/image-20201029215031253.png)
+
+
+
+# 第17章：IO操作深入
+
+## 字符编码
+
+![image-20201029215811931](3Java语言高级特性/image-20201029215811931.png)
+
+
+
+```java
+public class JavaApiDemo{
+    public static void main(String[] args) {
+        System.getProperties().list(System.out);
+    }
+}
+```
+
+-- listing properties --
+java.runtime.name=Java(TM) SE Runtime Environment
+sun.boot.library.path=/Library/Java/JavaVirtualMachines/jdk...
+java.vm.version=25.212-b10
+gopherProxySet=false
+java.vm.vendor=Oracle Corporation
+java.vendor.url=http://java.oracle.com/
+path.separator=:
+java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+file.encoding.pkg=sun.io
+user.country=CN
+sun.java.launcher=SUN_STANDARD
+sun.os.patch.level=unknown
+java.vm.specification.name=Java Virtual Machine Specification
+user.dir=/Users/lifei/IdeaProjects/test/JavaLe...
+java.runtime.version=1.8.0_212-b10
+java.awt.graphicsenv=sun.awt.CGraphicsEnvironment
+java.endorsed.dirs=/Library/Java/JavaVirtualMachines/jdk...
+os.arch=x86_64
+java.io.tmpdir=/var/folders/yj/xf0nrq6d18j5t4mzdtfwl...
+line.separator=
+
+java.vm.specification.vendor=Oracle Corporation
+os.name=Mac OS X
+sun.jnu.encoding=UTF-8
+java.library.path=/Users/lifei/Library/Java/Extensions:...
+java.specification.name=Java Platform API Specification
+java.class.version=52.0
+sun.management.compiler=HotSpot 64-Bit Tiered Compilers
+os.version=10.12.6
+http.nonProxyHosts=local|*.local|169.254/16|*.169.254/16
+user.home=/Users/lifei
+user.timezone=
+java.awt.printerjob=sun.lwawt.macosx.CPrinterJob
+file.encoding=UTF-8
+java.specification.version=1.8
+user.name=lifei
+java.class.path=/Library/Java/JavaVirtualMachines/jdk...
+java.vm.specification.version=1.8
+sun.arch.data.model=64
+java.home=/Library/Java/JavaVirtualMachines/jdk...
+sun.java.command=com.sunil.sun.lesson.JavaApiDemo
+java.specification.vendor=Oracle Corporation
+user.language=zh
+awt.toolkit=sun.lwawt.macosx.LWCToolkit
+java.vm.info=mixed mode
+java.version=1.8.0_212
+java.ext.dirs=/Users/lifei/Library/Java/Extensions:...
+sun.boot.class.path=/Library/Java/JavaVirtualMachines/jdk...
+java.vendor=Oracle Corporation
+file.separator=/
+java.vendor.url.bug=http://bugreport.sun.com/bugreport/
+sun.cpu.endian=little
+sun.io.unicode.encoding=UnicodeBig
+socksNonProxyHosts=local|*.local|169.254/16|*.169.254/16
+ftp.nonProxyHosts=local|*.local|169.254/16|*.169.254/16
+sun.cpu.isalist=
+
+
+
+
+
+![image-20201029220805734](3Java语言高级特性/image-20201029220805734.png)
+
+![image-20201029220826264](3Java语言高级特性/image-20201029220826264.png)
+
+
+
+![image-20201029220837457](3Java语言高级特性/image-20201029220837457.png)
+
+
+
+## 内存操作流
+
+![image-20201029220941860](3Java语言高级特性/image-20201029220941860.png)
+
+![image-20201029221008087](3Java语言高级特性/image-20201029221008087.png)
+
+![image-20201029221025328](3Java语言高级特性/image-20201029221025328.png)
+
+![image-20201029221114533](3Java语言高级特性/image-20201029221114533.png)
+
+![image-20201029221133347](3Java语言高级特性/image-20201029221133347.png)
+
+![image-20201029221211289](3Java语言高级特性/image-20201029221211289.png)
+
+![image-20201029221233561](3Java语言高级特性/image-20201029221233561.png)
+
+![image-20201029221340265](3Java语言高级特性/image-20201029221340265.png)
+
+
+
+![image-20201029221424975](3Java语言高级特性/image-20201029221424975.png)
+
+![image-20201029221616159](3Java语言高级特性/image-20201029221616159.png)
+
+![image-20201029222136528](3Java语言高级特性/image-20201029222136528.png)
+
+不希望只是以字符串的形式返回，因为可能存放其他二进制数据，可以利用ByteArrayOutputStream子类的扩展功能获取全部字节数据
+
+![image-20201029222400690](3Java语言高级特性/image-20201029222400690.png)
+
+
+
+![image-20201029222650894](3Java语言高级特性/image-20201029222650894.png)
+
+
+
+## 管道流
+
+![image-20201029223330296](3Java语言高级特性/image-20201029223330296.png)
+
+
+
+![image-20201029224241960](3Java语言高级特性/image-20201029224241960.png)
+
+![image-20201029224256268](3Java语言高级特性/image-20201029224256268.png)
+
+![image-20201029224315267](3Java语言高级特性/image-20201029224315267.png)
+
+![image-20201029224326837](3Java语言高级特性/image-20201029224326837.png)
+
+![image-20201029224340523](3Java语言高级特性/image-20201029224340523.png)
+
+![image-20201029224353232](3Java语言高级特性/image-20201029224353232.png)
+
+
+
+## RandomAccessFile
+
+![image-20201029224547459](3Java语言高级特性/image-20201029224547459.png)
+
+![image-20201029225054962](3Java语言高级特性/image-20201029225054962.png)
+
+![image-20201029225321143](3Java语言高级特性/image-20201029225321143.png)
+
+![image-20201029225341182](3Java语言高级特性/image-20201029225341182.png)
+
+![image-20201029225352702](3Java语言高级特性/image-20201029225352702.png)
+
+
+
+![image-20201029225410442](3Java语言高级特性/image-20201029225410442.png)
+
+![image-20201029225614315](3Java语言高级特性/image-20201029225614315.png)
+
+
+
+![image-20201029225642050](3Java语言高级特性/image-20201029225642050.png)
+
+![image-20201029225657560](3Java语言高级特性/image-20201029225657560.png)
+
+![image-20201029225708800](3Java语言高级特性/image-20201029225708800.png)
+
+
+
+
+
+![image-20201029225721549](3Java语言高级特性/image-20201029225721549.png)
+
+
+
+# 第18章：输入与输出支持
+
+
+
+
+
