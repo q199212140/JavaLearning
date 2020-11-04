@@ -1,4 +1,4 @@
-# 第1章：Java多线程编程
+ 第1章：Java多线程编程
 
 ## 2.进程与线程
 
@@ -3279,7 +3279,206 @@ java.util.regex开发包，如果不是进行一些更为复杂的正则处理�
 
 
 
-# 第11章：
+# 第11章：国际化程序实现
+
+所谓的国际化的程序指的是同一个程序代码可以根据不同的国家实现不同的语言描述，但是程序处理的核心业务是相同的。
+
+## 国际化问题简介
+
+![image-20200831222513300](3Java语言高级特性/image-20200831222513300.png)
+
+区域和语言
+
+![image-20200831223333273](3Java语言高级特性/image-20200831223333273.png)
+
+![image-20200831223856209](3Java语言高级特性/image-20200831223856209.png)
+
+![image-20200831223936879](3Java语言高级特性/image-20200831223936879.png)
+
+
+
+## Locale类
+
+![image-20200831224127544](3Java语言高级特性/image-20200831224127544-9575060.png)
+
+![image-20200831224257598](3Java语言高级特性/image-20200831224257598.png)
+
+![image-20200831224515647](3Java语言高级特性/image-20200831224515647.png)
+
+![image-20200831224555165](3Java语言高级特性/image-20200831224555165.png)
+
+范例：实例化Locale类对象
+
+```java
+import java.util.Locale;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Locale loc = new Locale("zh","CN"); //中文环境
+        System.out.println(loc);
+    }
+}
+```
+
+手工设置语言
+
+> zh_CN
+
+![image-20200831230647902](3Java语言高级特性/image-20200831230647902.png)
+
+```java
+import java.util.Locale;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Locale loc = Locale.getDefault(); //获取默认环境
+        System.out.println(loc);
+    }
+}
+```
+
+![image-20200831231052099](3Java语言高级特性/image-20200831231052099.png)
+
+```java
+import java.util.Locale;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Locale loc = Locale.CHINA;
+        System.out.println(loc);
+    }
+}
+```
+
+​	使用常量的优势在于可以避免一些区域编码信息的繁琐。
+
+
+
+## 资源文件
+
+![image-20200901231730739](3Java语言高级特性/image-20200901231730739.png)
+
+读取文件使用java.util.ResourceBundle类
+
+>  public abstract class ResourceBundle extends Object
+
+通过静态方法，获取此抽象类的实例
+
+> Public static final ResourceBundle getBundle(String baseName)
+>
+> - baseName：描述资源文件的名称，但没有后缀
+
+根据key读取资源内容
+
+> Public final String getString(String key)
+
+```java
+import java.util.ResourceBundle;
+
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        ResourceBundle resource = ResourceBundle.getBundle("message.Message");
+            String val = resource.getString("info");
+        System.out.println(val);
+    }
+}
+```
+
+
+
+如果中文有乱码
+
+```java
+import java.io.UnsupportedEncodingException;
+import java.util.ResourceBundle;
+
+public class JavaApiDemo {
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        ResourceBundle resource = ResourceBundle.getBundle("message.Message");
+            String val = new String(resource.getString("info").getBytes("ISO-8859-1"),"UTF-8");
+        System.out.println(val);
+    }
+}
+```
+
+也可能是"GBK"，取决于项目编码类型
+
+![image-20200905125855800](3Java语言高级特性/image-20200905125855800.png)
+
+
+
+
+
+## 实现国际化程序
+
+现在国际化程序的实现前期准备已经全部完成了，也就是说依靠资源文件、Locale类，ResourceBandle类就可以实现国际化的处理操作，那么下面来进行国际化的程序实现。（核心关键：读取资源信息）
+
+![image-20200905131955628](3Java语言高级特性/image-20200905131955628.png)
+
+![image-20200906083815918](3Java语言高级特性/image-20200906083815918.png)
+
+![image-20200906083911994](3Java语言高级特性/image-20200906083911994.png)
+
+
+
+## 消息格式化
+
+如果说现在某一位用户登录成功了，那么一般都会显示这样的信息“Xxx，欢迎您的光临！”也就是说这个时候会显示用户名，那么此时如果这些内容保存在了资源文件里面，则就需要通过占位符进行描述，同时对于读取出来的数据需要进行消息格式化的处理。
+
+范例：修改资源文件
+
+| 文件         | 名称                     | 内容                                |
+| ------------ | ------------------------ | ----------------------------------- |
+| 中文资源文件 | Message_zh_CN.properties | info=欢迎{0}的访问，当前日期是{1}！ |
+| 英文资源文件 | Message_en_US.properties | info=Welcome {0}, date: {1} !       |
+
+![image-20200906085146030](3Java语言高级特性/image-20200906085146030.png)
+
+![image-20200906085205948](3Java语言高级特性/image-20200906085205948.png)
+
+![image-20200906085247930](3Java语言高级特性/image-20200906085247930.png)
+
+范例：格式化文本
+
+```java
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.ResourceBundle;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Locale loc = new Locale("en", "US");
+        ResourceBundle resource = ResourceBundle.getBundle("message.Message",loc);
+        String val = resource.getString("info");
+        System.out.println(MessageFormat.format(val,"admin",new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
+    }
+}
+```
+
+> Welcome admin , date: 2020-09-06 !
+
+```java
+import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.ResourceBundle;
+public class JavaApiDemo {
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        Locale loc = new Locale("zh", "CN");
+        ResourceBundle resource = ResourceBundle.getBundle("message.Message",loc);
+        String val = new String(resource.getString("info"). getBytes("ISO-8859-1"),"UTF-8");
+        System.out.println(MessageFormat.format(val,"admin",new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
+    }
+}
+```
+
+对于中文需要用以上方式
+
+> 欢迎admin的访问，当前日期是2020-09-06！
+
+如果在日后开发过程之中见到资源文件里米娜有{0} {1}的结构表示的，都是占位符，该消息一定要进行格式化。
+
+ ![image-20200906090328737](3Java语言高级特性/image-20200906090328737.png)
 
 
 
@@ -3309,6 +3508,1508 @@ public class JavaApiDemo {
 > fdc061ae-fb06-4580-baf7-256df324a595
 
 在对一些文件进行自动命名处理的情况下，UUID类型非常好用。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 第13章：比较器
+
+所谓的比较器指的就是进行大小关系的确定判断，下面首先来分析一下比较器存在的意义。
+
+## 比较器问题的引出
+
+![image-20200907203506711](3Java语言高级特性/image-20200907203506711.png)
+
+```java
+import java.util.Arrays;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Integer data[] = new Integer[] {10,9,5,2,20};
+        Arrays.sort(data) ; //进行对象排序 ;
+        System.out.println(Arrays.toString(data));
+    }
+}
+```
+
+> [2, 5, 9, 10, 20]
+
+同样给定String类型的对象数组排序
+
+范例：
+
+```java
+import java.util.Arrays;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        String data[] = new String[] {"X","B","A","E","G"};
+        Arrays.sort(data) ; //进行对象排序 ;
+        System.out.println(Arrays.toString(data));
+    }
+}
+```
+
+> [A, B, E, G, X]
+
+![image-20200907210835012](3Java语言高级特性/image-20200907210835012.png)
+
+```java
+import java.util.Arrays;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Person data [] = new Person[] {
+            new Person("小强A", 80),
+            new Person("小强B", 50),
+            new Person("小强C", 100)};
+        Arrays.sort(data);
+        System.out.println(Arrays.toString(data));
+    }
+}
+class Person {
+    private String name;
+    private int age;
+    public Person(String name,int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    //无参构造 setter getter略
+    @Override
+    public String toString() {
+        return "【Person类对象】姓名：" + this.name + "、年龄：" + this.age + "\n";
+    }
+}
+```
+
+> Exception in thread "main" java.lang.ClassCastException: com.mldn.demo.java3.Person cannot be cast to java.lang.Comparable
+> 	at java.util.ComparableTimSort.countRunAndMakeAscending(ComparableTimSort.java:320)
+> 	at java.util.ComparableTimSort.sort(ComparableTimSort.java:188)
+> 	at java.util.Arrays.sort(Arrays.java:1246)
+> 	at com.mldn.demo.java3.JavaApiDemo.main(JavaApiDemo.java:114)
+
+人意的一个类默认情况下是无法使用系统内部的类实现数组排序或比较需求的。是因为没有明确的指定出到底应该如果进行比较的定义（没有比较规则），那么这个时候在java里面为了统一比较规则的定义，所以提供有比较器的借口：Comparable借口
+
+
+
+## Comparable比较器
+
+![image-20200907212439767](3Java语言高级特性/image-20200907212439767.png)
+
+默认很多类实现该接口，不用记
+
+![image-20200907212324614](3Java语言高级特性/image-20200907212324614.png)
+
+
+
+范例：实现自定义对象数组的排序
+
+```java
+import java.util.Arrays;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        Person data [] = new Person[] {
+            new Person("小强A", 80),
+            new Person("小强B", 50),
+            new Person("小强C", 100)};
+        Arrays.sort(data);
+        System.out.println(Arrays.toString(data));
+    }
+}
+class Person implements Comparable<Person>{
+    private String name;
+    private int age;
+    public Person(String name,int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    //无参构造 setter getter略
+    @Override
+    public String toString() {
+        return "【Person类对象】姓名：" + this.name + "、年龄：" + this.age + "\n";
+    }
+
+    @Override
+    public int compareTo(Person per) {
+        return this.age - per.age;
+    }
+}
+```
+
+一般排序是说升序
+
+> [【Person类对象】姓名：小强B、年龄：50
+> , 【Person类对象】姓名：小强A、年龄：80
+> , 【Person类对象】姓名：小强C、年龄：100
+> ]
+
+
+
+## Comparator比较器
+
+![image-20200907213035977](3Java语言高级特性/image-20200907213035977.png)
+
+后来经过若干个版本的迭代更新之后需要对Person类进行排序处理，但是又不能去修改Person（无法实现Comparable接口）所以这个时候需要采用一种挽救的形式来实现比较。在Arrays类里面排序有另一种实现。
+
+![image-20200907213514502](3Java语言高级特性/image-20200907213514502.png)
+
+![image-20200907213707700](3Java语言高级特性/image-20200907213707700.png)
+
+![image-20200907213934895](3Java语言高级特性/image-20200907213934895.png)
+
+![image-20200907214042524](3Java语言高级特性/image-20200907214042524.png)
+
+
+
+## 二叉树结构
+
+![image-20200907214113797](3Java语言高级特性/image-20200907214113797.png)
+
+如果要实现一棵树的结构等定义，那么就需要去考虑数据存储形式，在二叉树等实现之中其基本的实现原理如下：取第一个数据为保存的根结点，小于根结点的放在节点左子树，大于的放右边
+
+![image-20200907215034664](3Java语言高级特性/image-20200907215034664.png)
+
+![image-20200907215049635](3Java语言高级特性/image-20200907215049635.png)
+
+
+
+## 二叉树的基础实现
+
+![image-20200907215535279](3Java语言高级特性/image-20200907215535279.png)
+
+```java
+class Person implements Comparable<Person>{
+    private String name;
+    private int age;
+    public Person(String name,int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    //无参构造 setter getter略
+    @Override
+    public String toString() {
+        return "【Person类对象】姓名：" + this.name + "、年龄：" + this.age + "\n";
+    }
+
+    @Override
+    public int compareTo(Person per) {
+        return this.age - per.age;
+    }
+}
+```
+
+随后如果要想进行数据的保存，首先一定需要有一个节点类。节点类里面由于牵扯到数据的保存问题，所以必须使用Comparable（可以区分大小写）
+
+```java
+import java.util.Arrays;
+
+public class JavaApiDemo {
+    public static void main(String[] args) {
+    	BinaryTree<Person> tree = new BinaryTree<Person>();
+    	tree.add(new Person("小强-80", 80));
+    	tree.add(new Person("小强-30", 30));
+    	tree.add(new Person("小强-50", 50));
+    	tree.add(new Person("小强-60", 60));
+    	tree.add(new Person("小强-90", 90));
+    	System.out.println(Arrays.toString(tree.toArray()));
+    }
+}
+/**
+ *实现二叉树操作
+ */
+class BinaryTree<T extends Comparable<T>> {
+    private class Node {
+        private Comparable<T> data; //保存Comparable，可以比较大小
+        private Node parent; //保存父节点
+        private Node left; //保存左子树
+        private Node right;  //保存右子树
+        public Node(Comparable<T> data) { //构造方法直接负责进行数据的存储
+            this.data = data;
+        } //
+        /**
+         * 实现节点数据的适当位置的存储
+         * @param newNode 创建的新节点
+         */
+        public void addNode(Node newNode) {
+            if(newNode.data.compareTo((T) this.data) <= 0) { //比当前节点数据小
+            	if (this.left == null) { //现在没有左子树
+            		this.left = newNode;  //保存左子树
+            		newNode.parent = this;  //保存父节点
+            	} else { //需要向左边继续判断
+            		this.left.addNode(newNode);  //继续往下判断
+            	}
+
+            } else { //比根节点数据大
+            	if (this.right == null) {
+            		this.right = newNode; //没有右子树
+            		newNode.parent = this;  //保存父节点
+            	} else {
+            		this.right.addNode(newNode);  //继续向下判断
+            	}
+            } 
+        }
+        /**
+         * 实现所有数据的获取处理，按照中序遍历的形式来完成
+         */
+        public void toArrayNode() {
+        	if (this.left != null) { //有左子树
+        		this.left.toArrayNode(); //递归调用
+        	}
+        	BinaryTree.this.returnData[BinaryTree.this.foot ++ ] = this.data;
+        	if(this.right != null) {
+        		this.right.toArrayNode();
+        	}
+        }
+    }
+
+    //-----------以下为二叉树的功能实现--------------
+    private Node root;  //保存的是根结点
+    private int count;  //保存数据个数
+    private Object [] returnData;  //返回的数据
+    private int foot = 0; //脚标控制
+    /**
+     * 进行数据的保存
+     * @param data 要保存的数据内容
+     * @exception NullPointerException 保存数据为空时抛出异常
+     */
+    public void add(Comparable<T> data) {
+    	if (data == null) {
+    		throw new NullPointerException("保存的数据不允许为空！");
+    	}
+    	// 所有的数据本身不具备有节点关系的匹配，那么一定要将其包装在Node类之中
+    	Node newNode = new Node(data);  //保存节点
+    	if (this.root == null) { //现在没有根结点，则第一个节点作为根结点
+    		this.root = newNode ;
+    	} else { //需要为其保存到一个合适的节点
+    		this.root.addNode(newNode); //交由Node类负责处理
+    	}
+    	this.count ++ ;
+    }
+
+    /**
+     * 以对象数组的形式返回全部数据，如果没有数据返回null
+     * @return 全部数据
+     */
+    public Object[] toArray() {
+    	if (this.count == 0) {
+    		return null;
+    	}
+    	this.returnData = new Object[this.count];  //保存长度为数组长度
+    	this.foot = 0 ; //脚标清零
+    	this.root.toArrayNode();   //直接通过Node类负责
+    	return this.returnData;  //返回全部的数据
+    }
+}
+```
+
+> [【Person类对象】姓名：小强-30、年龄：30
+> , 【Person类对象】姓名：小强-50、年龄：50
+> , 【Person类对象】姓名：小强-60、年龄：60
+> , 【Person类对象】姓名：小强-80、年龄：80
+> , 【Person类对象】姓名：小强-90、年龄：90
+> ]
+
+在进行数据添加时候只是实现了节点关系的保存，这种关系保存完后是有序的排列
+
+
+
+## 数据查询
+
+![image-20200915233940148](3Java语言高级特性/image-20200915233940148.png)
+
+范例：根据对象信息查询
+
+* 在Node类里面扩充新的操作
+
+```java
+    /**
+     * 进行数据的检索处理
+     * @param data 要检索的数据
+     * @return 找到返回true
+     */
+    public boolean containsNode(Comparable<T> data) {
+    	if(data.compareTo((T)this.data) == 0) {
+    		return true; //找到了
+    	} else if (data.compareTo((T)this.data) <0 ) { //左边有数据
+    		if (this.left != null) {
+    			return this.left.containsNode(data);
+    		} else {
+    			return false;
+    		}
+    	} else {
+    		
+    		if (this.right != null) {
+    			return this.right.containsNode(data);
+    		} else {
+    			return false;
+    		}
+    	}
+    }
+```
+* 在BinaryTree类里面扩充新的操作方法：
+
+```java
+/**
+ * 现在的检索主要依靠Comparale实现的数据比较
+ */
+public boolean contains(Comparable<T> data) {
+	if (this.count == 0) { //还没有数据
+		return false;
+	}
+	return this.root.containsNode(data); // 该操作一定交由Node类完成
+}
+```
+![image-20200915235359106](3Java语言高级特性/image-20200915235359106.png)
+
+
+
+## 数据删除
+
+![image-20200915235447396](3Java语言高级特性/image-20200915235447396.png)
+
+![image-20200915235649106](3Java语言高级特性/image-20200915235649106.png)
+
+![image-20200917221716798](3Java语言高级特性/image-20200917221716798.png)
+
+
+
+![image-20200915235925934](3Java语言高级特性/image-20200915235925934.png)
+
+![image-20200915235956195](3Java语言高级特性/image-20200915235956195.png)
+
+只有一颗右子树
+
+![image-20200917211328559](3Java语言高级特性/image-20200917211328559.png)
+
+
+
+3.如果待删除节点有两个字节点：首先找出它的后继节点，然后处理后继节点和被删除节点的父节点之间的关系，最后处理后继节点的字节点和被删除节点的字节点之间的关系
+
+![image-20200916234454143](3Java语言高级特性/image-20200916234454143.png)
+
+范例
+
+```java
+
+/**
+ * 二叉树删除
+ */
+import java.util.Arrays;
+
+public class JavaApiDemo {
+    public static void main(String[] args) {
+    	BinaryTree<Person> tree = new BinaryTree<Person>();
+    	tree.add(new Person("小强-80", 80));
+    	tree.add(new Person("小强-50", 50));
+    	tree.add(new Person("小强-60", 60));
+    	tree.add(new Person("小强-30", 30));
+    	tree.add(new Person("小强-90", 90));
+    	tree.add(new Person("小强-10", 35));
+    	tree.add(new Person("小强-55", 55));
+    	tree.add(new Person("小强-70", 70));
+    	tree.add(new Person("小强-85", 85));
+    	tree.add(new Person("小强-95", 95));
+
+		System.out.println("原始：\n" + Arrays.toString(tree.toArray()));
+
+    	tree.remove(new Person("小强-95", 95));
+		System.out.println("第一类删除-无孩子 有兄弟：\n" + Arrays.toString(tree.toArray()));
+		tree.remove(new Person("小强-90", 90));
+		System.out.println("第二类删除-有左子 有兄弟：\n" + Arrays.toString(tree.toArray()));
+		tree.remove(new Person("小强-30", 30));
+		System.out.println("第二类删除-有右子 有兄弟：\n" + Arrays.toString(tree.toArray()));
+		tree.remove(new Person("小强-60", 60));
+		System.out.println("第三类删除-有两子：\n" + Arrays.toString(tree.toArray()));
+		tree.remove(new Person("小强-80", 80));
+		System.out.println("删除根结点：\n" + Arrays.toString(tree.toArray()));
+
+
+
+	}
+}
+/**
+ *实现二叉树操作
+ */
+class BinaryTree<T extends Comparable<T>> {
+    private class Node {
+        private Comparable<T> data; //保存Comparable，可以比较大小
+        private Node parent; //保存父节点
+        private Node left; //保存左子树
+        private Node right;  //保存右子树
+        public Node(Comparable<T> data) { //构造方法直接负责进行数据的存储
+            this.data = data;
+        } //
+        /**
+         * 实现节点数据的适当位置的存储
+         * @param newNode 创建的新节点
+         */
+        public void addNode(Node newNode) {
+            if(newNode.data.compareTo((T) this.data) <= 0) { //比当前节点数据小
+            	if (this.left == null) { //现在没有左子树
+            		this.left = newNode;  //保存左子树
+            		newNode.parent = this;  //保存父节点
+            	} else { //需要向左边继续判断
+            		this.left.addNode(newNode);  //继续往下判断
+            	}
+
+            } else { //比根节点数据大
+            	if (this.right == null) {
+            		this.right = newNode; //没有右子树
+            		newNode.parent = this;  //保存父节点
+            	} else {
+            		this.right.addNode(newNode);  //继续向下判断
+            	}
+            } 
+        }
+        /**
+         * 实现所有数据的获取处理，按照中序遍历的形式来完成
+         */
+        public void toArrayNode() {
+        	if (this.left != null) { //有左子树
+        		this.left.toArrayNode(); //递归调用
+        	}
+        	BinaryTree.this.returnData[BinaryTree.this.foot ++ ] = this.data;
+        	if(this.right != null) {
+        		this.right.toArrayNode();
+        	}
+        }
+        /**
+         * 进行数据的检索处理
+         * @param data 要检索的数据
+         * @return 找到返回true
+         */
+        public boolean containsNode(Comparable<T> data) {
+        	if(data.compareTo((T)this.data) == 0) {
+        		return true; //找到了
+        	} else if (data.compareTo((T)this.data) <0 ) { //左边有数据
+        		if (this.left != null) {
+        			return this.left.containsNode(data);
+        		} else {
+        			return false;
+        		}
+        	} else {
+        		
+        		if (this.right != null) {
+        			return this.right.containsNode(data);
+        		} else {
+        			return false;
+        		}
+        	}
+        }
+		/**
+		 * 获得要删除的节点对象
+		 * @param data 比较的对象
+		 * @return 要删除的节点对象，一定存在
+		 */
+		public Node getRemoveNode(Comparable<T> data) {
+			if (data.compareTo((T)this.data) == 0) {
+				return this;  //查找到了
+				//左边有数据
+			} else if (data.compareTo((T)this.data) <0) {
+				if(this.left != null) {
+					return this.left.getRemoveNode(data);
+				} else {
+					return null;
+				}
+			}else {
+				if (this.right != null) {
+					return this.right.getRemoveNode(data);
+				} else {
+					return null;
+				}
+			}
+		}
+    }
+
+    //-----------以下为二叉树的功能实现--------------
+    private Node root;  //保存的是根结点
+    private int count;  //保存数据个数
+    private Object [] returnData;  //返回的数据
+    private int foot = 0; //脚标控制
+    /**
+     * 进行数据的保存
+     * @param data 要保存的数据内容
+     * @exception NullPointerException 保存数据为空时抛出异常
+     */
+    public void add(Comparable<T> data) {
+    	if (data == null) {
+    		throw new NullPointerException("保存的数据不允许为空！");
+    	}
+    	// 所有的数据本身不具备有节点关系的匹配，那么一定要将其包装在Node类之中
+    	Node newNode = new Node(data);  //保存节点
+    	if (this.root == null) { //现在没有根结点，则第一个节点作为根结点
+    		this.root = newNode ;
+    	} else { //需要为其保存到一个合适的节点
+    		this.root.addNode(newNode); //交由Node类负责处理
+    	}
+    	this.count ++ ;
+    }
+
+    /**
+     * 以对象数组的形式返回全部数据，如果没有数据返回null
+     * @return 全部数据
+     */
+    public Object[] toArray() {
+    	if (this.count == 0) {
+    		return null;
+    	}
+    	this.returnData = new Object[this.count];  //保存长度为数组长度
+    	this.foot = 0 ; //脚标清零
+    	this.root.toArrayNode();   //直接通过Node类负责
+    	return this.returnData;  //返回全部的数据
+    }
+    /**
+     * 现在的检索主要依靠Comparale实现的数据比较
+     */
+    public boolean contains(Comparable<T> data) {
+    	if (this.count == 0) { //还没有数据
+    		return false;
+    	}
+    	return this.root.containsNode(data); // 该操作一定交由Node类完成
+    }
+
+	/**
+	 * 执行数据删除处理
+	 * @param data 要删除的数据
+	 */
+	public void remove(Comparable<T> data) {
+		if(this.root == null) { //根结点不存在
+			return; //结束调用
+		} else {
+			if(this.root.data.compareTo((T)data) == 0) { //要删除的是根结点
+				Node moveNode = this.root.right;  //移动的节点
+				while(moveNode.left != null ) { //现在还有左边的节点
+					moveNode = moveNode.left; //一直向左找
+				} //就可以确定删除节点的右节点的最小的左节点
+
+				if(this.root.right != moveNode) { //如果root的右节点有左节点
+					moveNode.parent.left = null; //断开原本的连接
+					moveNode.right = this.root.right;
+				}
+				moveNode.left = this.root.left;
+				this.root = moveNode; //改变根结点
+				this.count --;
+			} else {
+				Node removeNode = this.root.getRemoveNode(data);  //找到要删除的节点
+				if(removeNode != null) { //找到要删除的对象信息
+					//情况一：没子节点
+					if(removeNode.left == null && removeNode.right == null) {
+						if(removeNode == removeNode.parent.left) {//是父节点的左节点则断开左
+							removeNode.parent.left = null;
+						} else if(removeNode == removeNode.parent.right) { //是右则断开右
+							removeNode.parent.right = null;
+						}
+//				removeNode.parent.left = null;
+//				removeNode.parent.right = null;
+//				removeNode.parent = null;
+					} else if(removeNode.left != null && removeNode.right == null ) { //左边不为空
+//				removeNode.parent.left = removeNode.left;
+//				removeNode.left.parent = removeNode.parent;
+						if(removeNode == removeNode.parent.left) {//是父节点的左节点则孩子变为左
+							removeNode.parent.left = removeNode.left;
+						} else if(removeNode == removeNode.parent.right) { //是父节点的右
+							removeNode.parent.right = removeNode.left;
+						}
+					} else if (removeNode.left == null && removeNode.right != null ) { //右边无节点
+//				removeNode.parent.right = removeNode.right;
+//				removeNode.right.parent = removeNode.parent;
+						if(removeNode == removeNode.parent.left) {//是父节点的左节点则孩子变为左
+							removeNode.parent.left = removeNode.right;
+						} else if(removeNode == removeNode.parent.right) { //是父节点的右
+							removeNode.parent.right = removeNode.right;
+						}
+					} else { //两边都有节点，则将右边节点中最左边的节点找到改变指向
+						//右的最左，或者左的最右
+						Node moveNode = removeNode.right;  //移动的节点
+						while(moveNode.left != null ) { //现在还有左边的节点
+							moveNode = moveNode.left; //一直向左找
+						} //就可以确定删除节点的右节点的最小的左节点
+						if(removeNode.right != moveNode) { //如果removeNode的右节点有左节点
+							moveNode.parent.left = null; //断开原本的连接
+							moveNode.right = removeNode.right;
+						} else { //moveNode就是remove的右节点
+							moveNode.parent.right = null;
+						}
+						moveNode.parent = removeNode.parent;
+						moveNode.left = removeNode.left;
+						if (removeNode == removeNode.parent.left) {//是父节点的左节点
+							removeNode.parent.left = moveNode;
+						} else if(removeNode == removeNode.parent.right) { //是父节点的右
+							removeNode.parent.right = moveNode;
+						}
+					}
+					this.count -- ;
+				}
+			}
+		}
+	}
+}
+
+class Person implements Comparable<Person>{
+    private String name;
+    private int age;
+    public Person(String name,int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    //无参构造 setter getter略
+    @Override
+    public String toString() {
+        return "【Person类对象】姓名：" + this.name + "、年龄：" + this.age + "\n";
+    }
+
+    @Override
+    public int compareTo(Person per) {
+        return this.age - per.age;
+    }
+}
+
+```
+
+!!!视频演示有多处错误
+
+> 原始：
+> [【Person类对象】姓名：小强-30、年龄：30
+> , 【Person类对象】姓名：小强-10、年龄：35
+> , 【Person类对象】姓名：小强-50、年龄：50
+> , 【Person类对象】姓名：小强-55、年龄：55
+> , 【Person类对象】姓名：小强-60、年龄：60
+> , 【Person类对象】姓名：小强-70、年龄：70
+> , 【Person类对象】姓名：小强-80、年龄：80
+> , 【Person类对象】姓名：小强-85、年龄：85
+> , 【Person类对象】姓名：小强-90、年龄：90
+> , 【Person类对象】姓名：小强-95、年龄：95
+> ]
+> 第一类删除-无孩子 有兄弟：
+> [【Person类对象】姓名：小强-30、年龄：30
+> , 【Person类对象】姓名：小强-10、年龄：35
+> , 【Person类对象】姓名：小强-50、年龄：50
+> , 【Person类对象】姓名：小强-55、年龄：55
+> , 【Person类对象】姓名：小强-60、年龄：60
+> , 【Person类对象】姓名：小强-70、年龄：70
+> , 【Person类对象】姓名：小强-80、年龄：80
+> , 【Person类对象】姓名：小强-85、年龄：85
+> , 【Person类对象】姓名：小强-90、年龄：90
+> ]
+> 第二类删除-有左子 有兄弟：
+> [【Person类对象】姓名：小强-30、年龄：30
+> , 【Person类对象】姓名：小强-10、年龄：35
+> , 【Person类对象】姓名：小强-50、年龄：50
+> , 【Person类对象】姓名：小强-55、年龄：55
+> , 【Person类对象】姓名：小强-60、年龄：60
+> , 【Person类对象】姓名：小强-70、年龄：70
+> , 【Person类对象】姓名：小强-80、年龄：80
+> , 【Person类对象】姓名：小强-85、年龄：85
+> ]
+> 第二类删除-有右子 有兄弟：
+> [【Person类对象】姓名：小强-10、年龄：35
+> , 【Person类对象】姓名：小强-50、年龄：50
+> , 【Person类对象】姓名：小强-55、年龄：55
+> , 【Person类对象】姓名：小强-60、年龄：60
+> , 【Person类对象】姓名：小强-70、年龄：70
+> , 【Person类对象】姓名：小强-80、年龄：80
+> , 【Person类对象】姓名：小强-85、年龄：85
+> ]
+> 第三类删除-有两子：
+> [【Person类对象】姓名：小强-10、年龄：35
+> , 【Person类对象】姓名：小强-50、年龄：50
+> , 【Person类对象】姓名：小强-55、年龄：55
+> , 【Person类对象】姓名：小强-70、年龄：70
+> , 【Person类对象】姓名：小强-80、年龄：80
+> , 【Person类对象】姓名：小强-85、年龄：85
+> ]
+> 删除根结点：
+> [【Person类对象】姓名：小强-10、年龄：35
+> , 【Person类对象】姓名：小强-50、年龄：50
+> , 【Person类对象】姓名：小强-55、年龄：55
+> , 【Person类对象】姓名：小强-70、年龄：70
+> , 【Person类对象】姓名：小强-85、年龄：85
+> ]
+
+这种数据结构的删除操作是十分繁琐的，不是必要的情况下不建议使用删除。
+
+
+
+## 红黑树原理分析
+
+通过整个的二叉树实现相信已经可以清楚二叉树的主要特点：数据查询的时候可以提供更好的查询性能，但是这种原始的二叉树的结构是有明显缺陷的，例如：当二叉树结构改变的时候（增加或删除）就有可能出现不平衡的问题
+
+![image-20200919142219874](3Java语言高级特性/image-20200919142219874.png)
+
+![image-20200919142324467](3Java语言高级特性/image-20200919142324467.png)
+
+![image-20200919142418843](3Java语言高级特性/image-20200919142418843.png)
+
+
+
+![image-20200919142449483](3Java语言高级特性/image-20200919142449483.png)
+
+![image-20200919142742404](3Java语言高级特性/image-20200919142742404.png)
+
+
+
+![image-20200919142931443](3Java语言高级特性/image-20200919142931443.png)
+
+![image-20200919143131201](3Java语言高级特性/image-20200919143131201.png)
+
+
+
+![image-20200919143635309](3Java语言高级特性/image-20200919143635309.png)
+
+![image-20200919144017541](3Java语言高级特性/image-20200919144017541.png)
+
+![image-20200919144125093](3Java语言高级特性/image-20200919144125093.png)
+
+红红相连需变色
+
+![image-20200919144352711](3Java语言高级特性/image-20200919144352711.png)
+
+
+
+## 数据插入平衡修复
+
+![image-20200919144554054](3Java语言高级特性/image-20200919144554054.png)
+
+![image-20200919144653420](3Java语言高级特性/image-20200919144653420.png)
+
+![image-20200919144934582](3Java语言高级特性/image-20200919144934582.png)
+
+50是局部的根，不是root
+
+
+
+![image-20200919145352034](3Java语言高级特性/image-20200919145352034.png)
+
+
+
+![image-20200919145507839](3Java语言高级特性/image-20200919145507839.png)
+
+
+
+![image-20200919145704072](3Java语言高级特性/image-20200919145704072.png)
+
+
+
+![image-20200919145835763](3Java语言高级特性/image-20200919145835763.png)
+
+
+
+![image-20200919145950851](3Java语言高级特性/image-20200919145950851.png)
+
+
+
+![image-20200919150057157](3Java语言高级特性/image-20200919150057157.png)
+
+
+
+![image-20200919150210447](3Java语言高级特性/image-20200919150210447.png)
+
+
+
+![image-20200919150413576](3Java语言高级特性/image-20200919150413576.png)
+
+
+
+![image-20200919150859164](3Java语言高级特性/image-20200919150859164.png)
+
+
+
+![image-20200919151114008](3Java语言高级特性/image-20200919151114008.png)
+
+
+
+![image-20200919151230249](3Java语言高级特性/image-20200919151230249.png)
+
+
+
+![image-20200919151519913](3Java语言高级特性/image-20200919151519913.png)
+
+
+
+![image-20200919151607094](3Java语言高级特性/image-20200919151607094.png)
+
+
+
+![image-20200919151712904](3Java语言高级特性/image-20200919151712904.png)
+
+
+
+![image-20200919151825538](3Java语言高级特性/image-20200919151825538.png)
+
+
+
+![image-20200919151917349](3Java语言高级特性/image-20200919151917349.png)
+
+
+
+![image-20200919152054176](3Java语言高级特性/image-20200919152054176.png)
+
+
+
+## 总结
+
+![image-20200919152134976](3Java语言高级特性/image-20200919152134976.png)
+
+
+
+# 第14章：类库使用案例分析
+
+## 类库案例分析一：StringBuffer使用
+
+![image-20200919214614157](3Java语言高级特性/image-20200919214614157.png)
+
+```java
+public class JavaApiDemo {
+
+    public static void main(String[] args) {
+        StringBuffer buf = new StringBuffer();
+        for (int i = 'a'; i <= 'z'; i++) { //直接循环设置
+            buf.append((char) i);  //保存字符
+        }
+        buf.reverse().delete(0,5);  //反转处理
+        System.out.println(buf);
+    }
+}
+```
+
+![image-20200919215208502](3Java语言高级特性/image-20200919215208502.png)
+
+
+
+## 类库案例分析二：随机数组
+
+利用Random类随机产生5个1～30之间（包括1和30）的随机整数。
+
+Random产生随机数的操作之中会包含有数字0，所以此时不应该存在有数字0的问题。
+
+```java
+import java.util.Arrays;
+import java.util.Random;
+public class JavaApiDemo {
+    public static void main(String[] args) {
+        int result [] = NumberFactory.create(5);
+        System.out.println(Arrays.toString(result));
+    }
+}
+class NumberFactory {
+    private static Random random = new Random();
+    /**
+     * 通过随机数来生成一个数组的内容，该内容不包括有0
+     * @param len 要开辟的数组大小
+     * @return 包含有随机数的内容
+     */
+    public static int[] create(int len) {
+        int data [] = new int[len]; //开辟新的数组
+        int foot = 0;
+        while(foot < data.length) {
+            int num =random.nextInt(30);
+            if(num != 0) {
+                data[foot ++] = num;  //保存数据
+            }
+        }
+        return data;
+    }
+}
+```
+
+> [10, 28, 12, 24, 17]
+
+## 案例分析三：Email验证
+
+![image-20200919230520254](3Java语言高级特性/image-20200919230520254.png)
+
+![image-20200919230741719](3Java语言高级特性/image-20200919230741719.png)
+
+
+
+![image-20200919230854611](3Java语言高级特性/image-20200919230854611.png)
+
+
+
+## 案例分析四：抛硬币
+
+![image-20200919231227405](3Java语言高级特性/image-20200919231227405.png)
+
+![image-20200919231247539](3Java语言高级特性/image-20200919231247539.png)
+
+![image-20200919231311863](3Java语言高级特性/image-20200919231311863.png)
+
+
+
+## 案例分析五：IP验证
+
+编写正则表达式，判断给定的是否是一个合法的ip地址
+
+ip地址的组成就是数字，对于数字的组成有一个基础的要求，第一位是无、1、2，后面的内容可以为0-9
+
+![image-20200919232047430](3Java语言高级特性/image-20200919232047430.png)
+
+![image-20200919232101999](3Java语言高级特性/image-20200919232101999.png)
+
+
+
+## 案例分析六：HTML拆分
+
+![image-20200919232927112](3Java语言高级特性/image-20200919232927112.png)
+
+![image-20200919233100573](3Java语言高级特性/image-20200919233100573.png)
+
+
+
+![image-20200919233321945](3Java语言高级特性/image-20200919233321945.png)
+
+## 案例分析七：国家代码
+
+![image-20200919233925555](3Java语言高级特性/image-20200919233925555.png)
+
+![image-20200919234005587](3Java语言高级特性/image-20200919234005587.png)
+
+![image-20200919234136247](3Java语言高级特性/image-20200919234136247.png)
+
+
+
+## 案例分析八：学生信息比较
+
+![image-20200919234427479](3Java语言高级特性/image-20200919234427479.png)
+
+![image-20200919234514897](3Java语言高级特性/image-20200919234514897.png)
+
+![image-20200919234543629](3Java语言高级特性/image-20200919234543629.png)
+
+![image-20200919234557625](3Java语言高级特性/image-20200919234557625.png)
+
+![image-20200919234615090](3Java语言高级特性/image-20200919234615090.png)
+
+
+
+# 第15章：文件操作
+
+在java语言里面提供有对文件操作系统操作的支持，而这个支持就在java.io.File类中进行了定义，也就是在整个java.io包里面，File类是唯一一个与文件本身操作（创建、删除、重命名等）有关的类，而如果要想进行File类的操作，必须要提供有完整的路径，而后可以调用相应的方法进行处理。
+
+
+
+## File类基本操作
+
+![image-20200921205704637](3Java语言高级特性/image-20200921205704637.png)
+
+
+
+范例：使用File类创建一个文件（/usr/test.txt），（File类只操作文件，不操作内容）
+
+```java
+public class JavaApiDemo {
+    public static void main(String[] args) throws Exception{
+        
+        File file = new File("/Users/lifei/test.txt");
+        //File file = new File("d:\\test.txt");
+        System.out.println(file.createNewFile());  //创建新的文件
+    }
+}
+```
+
+> true
+
+```java
+public class JavaApiDemo {
+    public static void main(String[] args) throws Exception{
+        File file = new File("/Users/lifei/test.txt");
+        if(file.exists()) {
+            file.delete();   //删除文件
+        } else {  //文件不存在
+            System.out.println(file.createNewFile());  //创建新的文件
+        }
+    }
+}
+```
+
+
+
+## File类操作深入
+
+![image-20200921213215851](3Java语言高级特性/image-20200921213215851.png)
+
+separator是小写，历史遗留问题
+
+
+
+范例：正常的路径编写
+
+![image-20200921213534182](3Java语言高级特性/image-20200921213534182.png)
+
+2、在进行File类进行文件处理的时候需要注意的是：程序-->JVM -->操作系统函数 -->文件处理，所以在进行同一文件反复删除或者创建的时候有可能会出现有延迟的问题，所以这个时候最好的方案就是别重名；
+
+3、在进行文件创建的时候又一个重要的前提：文件等父路径必须首先存在
+
+![image-20200921213828586](3Java语言高级特性/image-20200921213828586.png)
+
+如果不存在
+
+> Exception in thread "main" java.io.IOException: No such file or directory
+> 	at java.io.UnixFileSystem.createFileExclusively(Native Method)
+> 	at java.io.File.createNewFile(File.java:1012)
+> 	at com.sunil.sun.lesson.JavaApiDemo.main(JavaApiDemo.java:1210)
+
+
+
+```java
+public class JavaApiDemo {
+    public static void main(String[] args) throws Exception {
+        File file = new File(
+            File.separator + "Users" + File.separator + "lifei" + File.separator + "dir1" + File.separator + "dir2"
+                + File.separator + "test.txt");
+        if (!file.getParentFile().exists()) {  //父路径不存在
+            file.getParentFile().mkdirs();   //创建父路径
+        }
+        if (file.exists()) {
+            file.delete();
+        } else {  //文件不存在
+            System.out.println(file.createNewFile());  //创建新的文件
+        }
+    }
+}
+```
+
+![image-20200921214627534](3Java语言高级特性/image-20200921214627534.png)
+
+
+
+## 获取文件信息
+
+![image-20200921214854459](3Java语言高级特性/image-20200921214854459.png)
+
+```java
+public class JavaApiDemo {
+    public static void main(String[] args) throws Exception {
+        File file = new File(
+            File.separator + "Users" + File.separator + "lifei" + File.separator + "test.txt");
+        System.out.println("文件是否可读：" + file.canRead());
+        System.out.println("文件是否可写：" + file.canWrite());
+        System.out.println("文件大小：" + MathUtil.round(file.length() / (double) 1024 / 1024, 2));
+        System.out
+            .println("最后的修改时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(file.lastModified())));
+        System.out.println("是目录吗？ " + file.isDirectory());
+        System.out.println("是文件吗？ " + file.isFile());
+    }
+}
+
+class MathUtil {
+
+    private MathUtil() {
+    }
+
+    public static double round(double num, int scale) {
+        return Math.round(Math.pow(10, scale) * num) / Math.pow(10, scale);
+    }
+
+}
+```
+
+> 文件是否可读：true
+> 文件是否可写：true
+> 文件大小：0.17
+> 最后的修改时间：2019-12-18 23:50:33
+> 是目录吗？ false
+> 是文件吗？ true
+
+
+
+```java
+public class JavaApiDemo {
+
+    public static void main(String[] args) {
+        File file = new File(File.separator + "Users" + File.separator + "lifei" + File.separator);
+        if(file.isDirectory()) {
+            File result[] = file.listFiles(); //列出目录全部内容
+            for (int i = 0; i < result.length; i++) {
+                System.out.println(result[i]);
+            }
+        }
+
+    }
+}
+```
+
+这些信息的获得都是文件或目录第本身，不涉及到内容处理
+
+> /Users/lifei/Postman
+> /Users/lifei/Public
+> /Users/lifei/PycharmProjects
+> /Users/lifei/repository
+> /Users/lifei/test.txt
+>
+> ...
+
+## 列出目录结构
+
+![image-20200921220907252](3Java语言高级特性/image-20200921220907252.png)
+
+范例：程序实现
+
+```java
+public class JavaApiDemo {
+
+    public static void main(String[] args) {
+        File file = new File("/Users/lifei/");
+        listDir(file);
+    }
+
+    public static void listDir(File file) {
+        if(file.isDirectory()) { //是一个目录
+            File results [] = file.listFiles();  //列出目录中的全部内容
+            if(results != null) {
+                for (int i = 0; i < results.length; i++) {
+                    listDir(results[i]);   //继续依次判断
+                }
+            }
+        }
+        System.out.println(file);  //获得完整路径
+
+    }
+}
+```
+
+如果将路径输出变为删除操作，那么就彻底删除路径。（删D:\\\  盘符都没了？）
+
+
+
+## 综合案例：文件批量更名
+
+![image-20200921221953262](3Java语言高级特性/image-20200921221953262.png)
+
+![image-20200921222012915](3Java语言高级特性/image-20200921222012915.png)
+
+```java
+public class JavaApiDemo {
+
+    public static void main(String[] args) throws Exception {
+        File file = new File("/Users/lifei/repository");   //是一个目录
+        renameDir(file);
+    }
+    public static void renameDir(File file) {
+        if(file.isDirectory()) { //是一个目录
+            File results [] = file.listFiles();  //列出目录中内容
+            if(results != null ) {
+                for (int i = 0; i < results.length; i++) {
+                    renameDir(results[i]);
+                }
+            }
+        } else if (file.isFile()) {
+            String fileName = null;
+            if(file.getName().contains(".")) {
+                fileName = file.getName().substring(0,file.getName().lastIndexOf(".")) + ".txt";
+            } else {
+                fileName = file.getName() + ".txt";
+            }
+            File newFile = new File(file.getParentFile(),fileName);  //新的文件名
+            file.renameTo(newFile);   //重命名
+        }
+    }
+}
+```
+
+
+
+
+
+## 转换流
+
+![image-20201029212001961](3Java语言高级特性/image-20201029212001961.png)
+
+![image-20201029212025250](3Java语言高级特性/image-20201029212025250.png)
+
+
+
+![image-20201029212212234](3Java语言高级特性/image-20201029212212234.png)
+
+
+
+观察转换
+
+
+
+![image-20201029212114676](3Java语言高级特性/image-20201029212114676.png)
+
+![image-20201029212349570](3Java语言高级特性/image-20201029212349570.png)
+
+
+
+![image-20201029212502665](3Java语言高级特性/image-20201029212502665.png)
+
+
+
+![image-20201029212655459](3Java语言高级特性/image-20201029212655459.png)
+
+![image-20201029212726675](3Java语言高级特性/image-20201029212726675.png)
+
+字符流适合处理中文，是由于缓存的存在
+
+所谓的缓存都是指的程序中间的一道数据缓冲区
+
+![image-20201029213035143](3Java语言高级特性/image-20201029213035143.png)
+
+真实存储方式：字节
+
+
+
+
+
+## 综合实战：文件拷贝
+
+![image-20201029213145877](3Java语言高级特性/image-20201029213145877.png)
+
+范例
+
+
+
+![image-20201029213540624](3Java语言高级特性/image-20201029213540624.png)
+
+原方法  do while
+
+
+
+
+
+![image-20201029213921856](3Java语言高级特性/image-20201029213921856.png)
+
+![image-20201029214007978](3Java语言高级特性/image-20201029214007978.png)
+
+![image-20201029214022857](3Java语言高级特性/image-20201029214022857.png)
+
+
+
+![image-20201029214111937](3Java语言高级特性/image-20201029214111937.png)
+
+
+
+  ![image-20201029214313863](3Java语言高级特性/image-20201029214313863.png)
+
+速度比while快
+
+![image-20201029214336694](3Java语言高级特性/image-20201029214336694.png)
+
+
+
+![image-20201029214412546](3Java语言高级特性/image-20201029214412546.png)
+
+![image-20201029214446606](3Java语言高级特性/image-20201029214446606.png)
+
+![image-20201029214510016](3Java语言高级特性/image-20201029214510016.png)
+
+![image-20201029214524857](3Java语言高级特性/image-20201029214524857.png)
+
+![image-20201029214535313](3Java语言高级特性/image-20201029214535313.png)
+
+![image-20201029214551797](3Java语言高级特性/image-20201029214551797.png)
+
+![image-20201029215031253](3Java语言高级特性/image-20201029215031253.png)
+
+
+
+# 第17章：IO操作深入
+
+## 字符编码
+
+![image-20201029215811931](3Java语言高级特性/image-20201029215811931.png)
+
+
+
+```java
+public class JavaApiDemo{
+    public static void main(String[] args) {
+        System.getProperties().list(System.out);
+    }
+}
+```
+
+-- listing properties --
+java.runtime.name=Java(TM) SE Runtime Environment
+sun.boot.library.path=/Library/Java/JavaVirtualMachines/jdk...
+java.vm.version=25.212-b10
+gopherProxySet=false
+java.vm.vendor=Oracle Corporation
+java.vendor.url=http://java.oracle.com/
+path.separator=:
+java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+file.encoding.pkg=sun.io
+user.country=CN
+sun.java.launcher=SUN_STANDARD
+sun.os.patch.level=unknown
+java.vm.specification.name=Java Virtual Machine Specification
+user.dir=/Users/lifei/IdeaProjects/test/JavaLe...
+java.runtime.version=1.8.0_212-b10
+java.awt.graphicsenv=sun.awt.CGraphicsEnvironment
+java.endorsed.dirs=/Library/Java/JavaVirtualMachines/jdk...
+os.arch=x86_64
+java.io.tmpdir=/var/folders/yj/xf0nrq6d18j5t4mzdtfwl...
+line.separator=
+
+java.vm.specification.vendor=Oracle Corporation
+os.name=Mac OS X
+sun.jnu.encoding=UTF-8
+java.library.path=/Users/lifei/Library/Java/Extensions:...
+java.specification.name=Java Platform API Specification
+java.class.version=52.0
+sun.management.compiler=HotSpot 64-Bit Tiered Compilers
+os.version=10.12.6
+http.nonProxyHosts=local|*.local|169.254/16|*.169.254/16
+user.home=/Users/lifei
+user.timezone=
+java.awt.printerjob=sun.lwawt.macosx.CPrinterJob
+file.encoding=UTF-8
+java.specification.version=1.8
+user.name=lifei
+java.class.path=/Library/Java/JavaVirtualMachines/jdk...
+java.vm.specification.version=1.8
+sun.arch.data.model=64
+java.home=/Library/Java/JavaVirtualMachines/jdk...
+sun.java.command=com.sunil.sun.lesson.JavaApiDemo
+java.specification.vendor=Oracle Corporation
+user.language=zh
+awt.toolkit=sun.lwawt.macosx.LWCToolkit
+java.vm.info=mixed mode
+java.version=1.8.0_212
+java.ext.dirs=/Users/lifei/Library/Java/Extensions:...
+sun.boot.class.path=/Library/Java/JavaVirtualMachines/jdk...
+java.vendor=Oracle Corporation
+file.separator=/
+java.vendor.url.bug=http://bugreport.sun.com/bugreport/
+sun.cpu.endian=little
+sun.io.unicode.encoding=UnicodeBig
+socksNonProxyHosts=local|*.local|169.254/16|*.169.254/16
+ftp.nonProxyHosts=local|*.local|169.254/16|*.169.254/16
+sun.cpu.isalist=
+
+
+
+
+
+![image-20201029220805734](3Java语言高级特性/image-20201029220805734.png)
+
+![image-20201029220826264](3Java语言高级特性/image-20201029220826264.png)
+
+
+
+![image-20201029220837457](3Java语言高级特性/image-20201029220837457.png)
+
+
+
+## 内存操作流
+
+![image-20201029220941860](3Java语言高级特性/image-20201029220941860.png)
+
+![image-20201029221008087](3Java语言高级特性/image-20201029221008087.png)
+
+![image-20201029221025328](3Java语言高级特性/image-20201029221025328.png)
+
+![image-20201029221114533](3Java语言高级特性/image-20201029221114533.png)
+
+![image-20201029221133347](3Java语言高级特性/image-20201029221133347.png)
+
+![image-20201029221211289](3Java语言高级特性/image-20201029221211289.png)
+
+![image-20201029221233561](3Java语言高级特性/image-20201029221233561.png)
+
+![image-20201029221340265](3Java语言高级特性/image-20201029221340265.png)
+
+
+
+![image-20201029221424975](3Java语言高级特性/image-20201029221424975.png)
+
+![image-20201029221616159](3Java语言高级特性/image-20201029221616159.png)
+
+![image-20201029222136528](3Java语言高级特性/image-20201029222136528.png)
+
+不希望只是以字符串的形式返回，因为可能存放其他二进制数据，可以利用ByteArrayOutputStream子类的扩展功能获取全部字节数据
+
+![image-20201029222400690](3Java语言高级特性/image-20201029222400690.png)
+
+
+
+![image-20201029222650894](3Java语言高级特性/image-20201029222650894.png)
+
+
+
+## 管道流
+
+![image-20201029223330296](3Java语言高级特性/image-20201029223330296.png)
+
+
+
+![image-20201029224241960](3Java语言高级特性/image-20201029224241960.png)
+
+![image-20201029224256268](3Java语言高级特性/image-20201029224256268.png)
+
+![image-20201029224315267](3Java语言高级特性/image-20201029224315267.png)
+
+![image-20201029224326837](3Java语言高级特性/image-20201029224326837.png)
+
+![image-20201029224340523](3Java语言高级特性/image-20201029224340523.png)
+
+![image-20201029224353232](3Java语言高级特性/image-20201029224353232.png)
+
+
+
+## RandomAccessFile
+
+![image-20201029224547459](3Java语言高级特性/image-20201029224547459.png)
+
+![image-20201029225054962](3Java语言高级特性/image-20201029225054962.png)
+
+![image-20201029225321143](3Java语言高级特性/image-20201029225321143.png)
+
+![image-20201029225341182](3Java语言高级特性/image-20201029225341182.png)
+
+![image-20201029225352702](3Java语言高级特性/image-20201029225352702.png)
+
+
+
+![image-20201029225410442](3Java语言高级特性/image-20201029225410442.png)
+
+![image-20201029225614315](3Java语言高级特性/image-20201029225614315.png)
+
+
+
+![image-20201029225642050](3Java语言高级特性/image-20201029225642050.png)
+
+![image-20201029225657560](3Java语言高级特性/image-20201029225657560.png)
+
+![image-20201029225708800](3Java语言高级特性/image-20201029225708800.png)
+
+
+
+
+
+![image-20201029225721549](3Java语言高级特性/image-20201029225721549.png)
+
+
+
+# 第18章：输入与输出支持
 
 
 
