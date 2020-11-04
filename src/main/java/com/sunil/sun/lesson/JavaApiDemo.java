@@ -652,6 +652,93 @@ public class JavaApiDemo {
 
  */
 
+/*
+12.48 Optional类
+ */
+//public class JavaApiDemo {
+//    public static void main(String[] args) throws ParseException {
+//
+//    }
+//}
+//class MessageUtil {
+//    private MessageUtil() {}
+//    public static IMessage getImessage() {
+//        return null;
+//    }
+//    public static void useMessage(IMessage msg) {
+//        if(msg != null) {
+//            System.out.println(msg.getContent());    //有可能出现null，导致空指针
+//        }
+//    }
+//}
+//interface IMessage {
+//    public String getContent();
+//}
+//class MessageImpl implements IMessage {
+//    @Override
+//    public String getContent() {
+//        return "this is a Message";
+//    }
+//}
+
+//public class JavaApiDemo {
+//    public static void main(String[] args) throws ParseException {
+//        IMessage temp = MessageUtil.getMessage().get();    //获取数据
+//        MessageUtil.useMessage(temp);
+//    }
+//}
+//class MessageUtil {
+//    private MessageUtil() {}
+//    public static Optional<IMessage> getMessage() {
+//        return Optional.of(new MessageImpl()); //有对象
+//    }
+//    public static void useMessage(IMessage msg) {
+//        if(msg != null) {
+//            System.out.println(msg.getContent());    //有可能出现null，导致空指针
+//        }
+//    }
+//}
+//interface IMessage {
+//    public String getContent();
+//}
+//class MessageImpl implements IMessage {
+//    @Override
+//    public String getContent() {
+//        return "this is a Message";
+//    }
+//}
+
+
+
+
+//public class JavaApiDemo {
+//    public static void main(String[] args) throws ParseException {
+//        IMessage temp = MessageUtil.getMessage().orElse(new MessageImpl());    //获取数据
+//        MessageUtil.useMessage(temp);
+//    }
+//}
+//class MessageUtil {
+//    private MessageUtil() {}
+//    public static Optional<IMessage> getMessage() {
+//        return Optional.ofNullable(null); //无对象
+//    }
+//    public static void useMessage(IMessage msg) {
+//        if(msg != null) {
+//            System.out.println(msg.getContent());    //有可能出现null，导致空指针
+//        }
+//    }
+//}
+//interface IMessage {
+//    public String getContent();
+//}
+//class MessageImpl implements IMessage {
+//    @Override
+//    public String getContent() {
+//        return "this is a Message";
+//    }
+//}
+
+
 
 /*
 13.52 比较器

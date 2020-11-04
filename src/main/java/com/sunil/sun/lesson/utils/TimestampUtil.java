@@ -1,4 +1,4 @@
-package com.sunil.sun.utils;
+package com.sunil.sun.lesson.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
