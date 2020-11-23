@@ -11,169 +11,175 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class SimulatorOpts {
 
-	// Endpoints, Weighted map of endpoints to simulate
-	@Value("${opts.endpoints}")
-	private String[] endopints;
-	
-	// RequestRate, requests per second
-	@Value("${opts.request_rate}")
-	private int requestRate;
-	
-	// RequestRateUncertainty, Percentage of uncertainty when generating requests (+/-)
-	@Value("${opts.request_rate_uncertainty}")
-	private int requestRateUncertainty;
-	
-	// LatencyMin in milliseconds
-	@Value("${opts.latency_min}")
-	private int latencyMin;
+    // Endpoints, Weighted map of endpoints to simulate
+    @Value("${opts.endpoints}")
+    private String[] endopints;
 
-	// LatencyP50 in milliseconds
-	@Value("${opts.latency_p50}")
-	private int latencyP50;
-	
-	// LatencyP90 in milliseconds
-	@Value("${opts.latency_p90}")
-	private int latencyP90;
-	
-	// LatencyP99 in milliseconds
-	@Value("${opts.latency_p99}")
-	private int latencyP99;
-	
-	// LatencyMax in milliseconds
-	@Value("${opts.latency_max}")
-	private int latencyMax;
-	
-	// LatencyUncertainty, Percentage of uncertainty when generating latency (+/-)
-	@Value("${opts.latency_uncertainty}")
-	private int latencyUncertainty;
-	
-	// ErrorRate, Percentage of chance of requests causing 500
-	@Value("${opts.error_rate}")
-	private int errorRate;
-	
-	// SpikeStartChance, Percentage of chance of entering spike mode
-	@Value("${opts.spike_start_chance}")
-	private int spikeStartChance;
-	
-	// SpikeStartChance, Percentage of chance of exiting spike mode
-	@Value("${opts.spike_end_chance}")
-	private int spikeEndChance;
-	
-	// SpikeModeStatus ON/OFF/RANDOM
-	private SpikeMode spikeMode = SpikeMode.OFF;
+    // RequestRate, requests per second
+    @Value("${opts.request_rate}")
+    private int requestRate;
 
-	public String[] getEndopints() {
-		return endopints;
-	}
+    // RequestRateUncertainty, Percentage of uncertainty when generating requests (+/-)
+    @Value("${opts.request_rate_uncertainty}")
+    private int requestRateUncertainty;
 
-	public void setEndopints(String[] endopints) {
-		this.endopints = endopints;
-	}
+    // LatencyMin in milliseconds
+    @Value("${opts.latency_min}")
+    private int latencyMin;
 
-	public int getRequestRate() {
-		return requestRate;
-	}
+    // LatencyP50 in milliseconds
+    @Value("${opts.latency_p50}")
+    private int latencyP50;
 
-	public void setRequestRate(int requestRate) {
-		this.requestRate = requestRate;
-	}
+    // LatencyP90 in milliseconds
+    @Value("${opts.latency_p90}")
+    private int latencyP90;
 
-	public int getRequestRateUncertainty() {
-		return requestRateUncertainty;
-	}
+    // LatencyP99 in milliseconds
+    @Value("${opts.latency_p99}")
+    private int latencyP99;
 
-	public void setRequestRateUncertainty(int requestRateUncertainty) {
-		this.requestRateUncertainty = requestRateUncertainty;
-	}
+    // LatencyMax in milliseconds
+    @Value("${opts.latency_max}")
+    private int latencyMax;
 
-	public int getLatencyMin() {
-		return latencyMin;
-	}
+    // LatencyUncertainty, Percentage of uncertainty when generating latency (+/-)
+    @Value("${opts.latency_uncertainty}")
+    private int latencyUncertainty;
 
-	public void setLatencyMin(int latencyMin) {
-		this.latencyMin = latencyMin;
-	}
+    // ErrorRate, Percentage of chance of requests causing 500
+    @Value("${opts.error_rate}")
+    private int errorRate;
 
-	public int getLatencyP50() {
-		return latencyP50;
-	}
+    // SpikeStartChance, Percentage of chance of entering spike mode
+    @Value("${opts.spike_start_chance}")
+    private int spikeStartChance;
 
-	public void setLatencyP50(int latencyP50) {
-		this.latencyP50 = latencyP50;
-	}
+    // SpikeStartChance, Percentage of chance of exiting spike mode
+    @Value("${opts.spike_end_chance}")
+    private int spikeEndChance;
 
-	public int getLatencyP90() {
-		return latencyP90;
-	}
+    // SpikeModeStatus ON/OFF/RANDOM
+    private SpikeMode spikeMode = SpikeMode.OFF;
 
-	public void setLatencyP90(int latencyP90) {
-		this.latencyP90 = latencyP90;
-	}
+    public String[] getEndopints() {
+        return endopints;
+    }
 
-	public int getLatencyP99() {
-		return latencyP99;
-	}
+    public void setEndopints(String[] endopints) {
+        this.endopints = endopints;
+    }
 
-	public void setLatencyP99(int latencyP99) {
-		this.latencyP99 = latencyP99;
-	}
+    public int getRequestRate() {
+        return requestRate;
+    }
 
-	public int getLatencyMax() {
-		return latencyMax;
-	}
+    public void setRequestRate(int requestRate) {
+        this.requestRate = requestRate;
+    }
 
-	public void setLatencyMax(int latencyMax) {
-		this.latencyMax = latencyMax;
-	}
+    public int getRequestRateUncertainty() {
+        return requestRateUncertainty;
+    }
 
-	public int getLatencyUncertainty() {
-		return latencyUncertainty;
-	}
+    public void setRequestRateUncertainty(int requestRateUncertainty) {
+        this.requestRateUncertainty = requestRateUncertainty;
+    }
 
-	public void setLatencyUncertainty(int latencyUncertainty) {
-		this.latencyUncertainty = latencyUncertainty;
-	}
+    public int getLatencyMin() {
+        return latencyMin;
+    }
 
-	public int getErrorRate() {
-		return errorRate;
-	}
+    public void setLatencyMin(int latencyMin) {
+        this.latencyMin = latencyMin;
+    }
 
-	public void setErrorRate(int errorRate) {
-		this.errorRate = errorRate;
-	}
+    public int getLatencyP50() {
+        return latencyP50;
+    }
 
-	public int getSpikeStartChance() {
-		return spikeStartChance;
-	}
+    public void setLatencyP50(int latencyP50) {
+        this.latencyP50 = latencyP50;
+    }
 
-	public void setSpikeStartChance(int spikeStartChance) {
-		this.spikeStartChance = spikeStartChance;
-	}
+    public int getLatencyP90() {
+        return latencyP90;
+    }
 
-	public int getSpikeEndChance() {
-		return spikeEndChance;
-	}
+    public void setLatencyP90(int latencyP90) {
+        this.latencyP90 = latencyP90;
+    }
 
-	public void setSpikeEndChance(int spikeEndChance) {
-		this.spikeEndChance = spikeEndChance;
-	}
+    public int getLatencyP99() {
+        return latencyP99;
+    }
 
-	public SpikeMode getSpikeMode() {
-		return spikeMode;
-	}
+    public void setLatencyP99(int latencyP99) {
+        this.latencyP99 = latencyP99;
+    }
 
-	public void setSpikeMode(SpikeMode spikeMode) {
-		this.spikeMode = spikeMode;
-	}
+    public int getLatencyMax() {
+        return latencyMax;
+    }
 
-	@Override
-	public String toString() {
-		return "SimulatorOpts [endopints=" + Arrays.toString(endopints) + ", requestRate=" + requestRate
-				+ ", requestRateUncertainty=" + requestRateUncertainty + ", latencyMin=" + latencyMin + ", latencyP50="
-				+ latencyP50 + ", latencyP90=" + latencyP90 + ", latencyP99=" + latencyP99 + ", latencyMax="
-				+ latencyMax + ", latencyUncertainty=" + latencyUncertainty + ", errorRate=" + errorRate
-				+ ", spikeStartChance=" + spikeStartChance + ", spikeEndChance=" + spikeEndChance + ", spikeMode="
-				+ spikeMode + "]";
-	}
-	
+    public void setLatencyMax(int latencyMax) {
+        this.latencyMax = latencyMax;
+    }
+
+    public int getLatencyUncertainty() {
+        return latencyUncertainty;
+    }
+
+    public void setLatencyUncertainty(int latencyUncertainty) {
+        this.latencyUncertainty = latencyUncertainty;
+    }
+
+    public int getErrorRate() {
+        return errorRate;
+    }
+
+    public void setErrorRate(int errorRate) {
+        this.errorRate = errorRate;
+    }
+
+    public int getSpikeStartChance() {
+        return spikeStartChance;
+    }
+
+    public void setSpikeStartChance(int spikeStartChance) {
+        this.spikeStartChance = spikeStartChance;
+    }
+
+    public int getSpikeEndChance() {
+        return spikeEndChance;
+    }
+
+    public void setSpikeEndChance(int spikeEndChance) {
+        this.spikeEndChance = spikeEndChance;
+    }
+
+    public SpikeMode getSpikeMode() {
+        return spikeMode;
+    }
+
+
+    /**
+     * 设置模式
+     *
+     * @param spikeMode
+     */
+    public void setSpikeMode(SpikeMode spikeMode) {
+        this.spikeMode = spikeMode;
+    }
+
+    @Override
+    public String toString() {
+        return "SimulatorOpts [endopints=" + Arrays.toString(endopints) + ", requestRate=" + requestRate
+            + ", requestRateUncertainty=" + requestRateUncertainty + ", latencyMin=" + latencyMin + ", latencyP50="
+            + latencyP50 + ", latencyP90=" + latencyP90 + ", latencyP99=" + latencyP99 + ", latencyMax="
+            + latencyMax + ", latencyUncertainty=" + latencyUncertainty + ", errorRate=" + errorRate
+            + ", spikeStartChance=" + spikeStartChance + ", spikeEndChance=" + spikeEndChance + ", spikeMode="
+            + spikeMode + "]";
+    }
+
 }

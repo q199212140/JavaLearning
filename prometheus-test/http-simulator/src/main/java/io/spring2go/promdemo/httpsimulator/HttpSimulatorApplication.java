@@ -22,57 +22,92 @@ import io.prometheus.client.spring.boot.EnablePrometheusEndpoint;
 @EnablePrometheusEndpoint
 public class HttpSimulatorApplication implements ApplicationListener<ContextClosedEvent> {
 
-	@Autowired
-	private SimulatorOpts opts;
+    @Autowired
+    private SimulatorOpts opts;
 
-	private ActivitySimulator simulator;
+    private ActivitySimulator simulator;
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		SpringApplication.run(HttpSimulatorApplication.class, args);
-	}
+        SpringApplication.run(HttpSimulatorApplication.class, args);
+    }
 
-	@RequestMapping(value = "/opts")
-	public @ResponseBody String getOps() {
-		return opts.toString();
-	}
 
-	@RequestMapping(value = "/spike/{mode}", method = RequestMethod.POST)
-	public @ResponseBody String setSpikeMode(@PathVariable("mode") String mode) {
-		boolean result = simulator.setSpikeMode(mode);
-		if (result) {
-			return "ok";
-		} else {
-			return "wrong spike mode " + mode;
-		}
-	}
+    /**
+     * 获取模拟器设置
+     *
+     * @return
+     */
+    @RequestMapping(value = "/opts")
+    public @ResponseBody
+    String getOps() {
+        return opts.toString();
+    }
 
-	@RequestMapping(value = "error_rate/{error_rate}", method = RequestMethod.POST)
-	public @ResponseBody String setErrorRate(@PathVariable("error_rate") int errorRate) {
-		simulator.setErrorRate(errorRate);
-		return "ok";
-	}
 
-	@Bean
-	public TaskExecutor taskExecutor() {
-		return new SimpleAsyncTaskExecutor();
-	}
+    /**
+     * 开启spike模式，on/off/random
+     *
+     * @param mode
+     * @return
+     */
+    @RequestMapping(value = "/spike/{mode}", method = RequestMethod.POST)
+    public @ResponseBody
+    String setSpikeMode(@PathVariable("mode") String mode) {
+        boolean result = simulator.setSpikeMode(mode);
+        if (result) {
+            return "ok";
+        } else {
+            return "wrong spike mode " + mode;
+        }
+    }
 
-	@Bean
-	public CommandLineRunner schedulingRunner(TaskExecutor executor) {
-		return new CommandLineRunner() {
-			public void run(String... args) throws Exception {
-				simulator = new ActivitySimulator(opts);
-				executor.execute(simulator);
-				System.out.println("Simulator thread started...");
-			}
-		};
-	}
 
-	@Override
-	public void onApplicationEvent(ContextClosedEvent event) {
-		simulator.shutdown();
-		System.out.println("Simulator shutdown...");
-	}
+    /**
+     * 设置模拟的错误率
+     *
+     * @param errorRate
+     * @return
+     */
+    @RequestMapping(value = "error_rate/{error_rate}", method = RequestMethod.POST)
+    public @ResponseBody
+    String setErrorRate(@PathVariable("error_rate") int errorRate) {
+        simulator.setErrorRate(errorRate);
+        return "ok";
+    }
+
+
+    @Bean
+    public TaskExecutor taskExecutor() {
+        return new SimpleAsyncTaskExecutor();
+    }
+
+
+    /**
+     * 启动自动开启模拟器
+     *
+     * @param executor
+     * @return
+     */
+    @Bean
+    public CommandLineRunner schedulingRunner(TaskExecutor executor) {
+        return args -> {
+            simulator = new ActivitySimulator(opts);
+            executor.execute(simulator);
+            System.out.println("Simulator thread started...");
+        };
+    }
+
+
+    /**
+     * 停止模拟器
+     *
+     * @param event
+     */
+    @Override
+    public void onApplicationEvent(ContextClosedEvent event) {
+        simulator.shutdown();
+        System.out.println("Simulator shutdown...");
+    }
 
 }
