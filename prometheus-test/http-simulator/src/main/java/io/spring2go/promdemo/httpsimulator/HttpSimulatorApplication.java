@@ -1,9 +1,14 @@
 package io.spring2go.promdemo.httpsimulator;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextClosedEvent;
@@ -14,12 +19,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 
-import io.prometheus.client.spring.boot.EnablePrometheusEndpoint;
+
+//springboot 1.x用
+//import io.prometheus.client.spring.boot.EnablePrometheusEndpoint;
+//@EnablePrometheusEndpoint
 
 @Controller
-@SpringBootApplication
-@EnablePrometheusEndpoint
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class,
+    DataSourceTransactionManagerAutoConfiguration.class, RedisAutoConfiguration.class})
 public class HttpSimulatorApplication implements ApplicationListener<ContextClosedEvent> {
 
     @Autowired
@@ -108,6 +117,11 @@ public class HttpSimulatorApplication implements ApplicationListener<ContextClos
     public void onApplicationEvent(ContextClosedEvent event) {
         simulator.shutdown();
         System.out.println("Simulator shutdown...");
+    }
+
+    @Bean
+    MeterRegistryCustomizer<MeterRegistry> configurer(@Value("${spring.application.name}") String applicationName) {
+        return registry -> registry.config().commonTags("application", applicationName);
     }
 
 }

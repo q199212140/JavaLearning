@@ -3,19 +3,14 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.spring2go.promdemo</groupId>
+  <groupId>com.sunil.sun</groupId>
   <artifactId>http-simulator</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
-
-  <name>http-simulator</name>
-  <description>Demo project for Spring Boot</description>
+  <version>1.0-SNAPSHOT</version>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.17.RELEASE</version>
-    <relativePath/> <!-- lookup parent from repository -->
+    <version>2.0.7.RELEASE</version>
   </parent>
 
   <properties>
@@ -29,19 +24,54 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-
-    <!-- The prometheus client -->
-    <dependency>
-      <groupId>io.prometheus</groupId>
-      <artifactId>simpleclient_spring_boot</artifactId>
-      <version>0.5.0</version>
-    </dependency>
-
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- springboot 1.x用 prometheus client -->
+    <!--    <dependency>-->
+    <!--      <groupId>io.prometheus</groupId>-->
+    <!--      <artifactId>simpleclient_spring_boot</artifactId>-->
+    <!--      <version>0.9.0</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>io.prometheus</groupId>-->
+    <!--      <artifactId>simpleclient_httpserver</artifactId>-->
+    <!--      <version>0.9.0</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>io.prometheus</groupId>-->
+    <!--      <artifactId>simpleclient_hotspot</artifactId>-->
+    <!--      <version>0.9.0</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>io.prometheus</groupId>-->
+    <!--      <artifactId>simpleclient_spring_boot</artifactId>-->
+    <!--      <version>0.9.0</version>-->
+    <!--    </dependency>-->
+
+
+    <!-- springboot 2.x用 micrometer -->
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <!-- Micormeter core dependecy -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-core</artifactId>
+      <version>1.6.0</version>
+    </dependency>
+    <!-- Micrometer Prometheus registry -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+      <version>1.6.0</version>
+    </dependency>
+
   </dependencies>
 
   <build>

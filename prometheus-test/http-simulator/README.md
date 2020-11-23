@@ -7,6 +7,8 @@
 运行时访问端点：
 ```
 http://SERVICE_URL:8080/prometheus
+
+http://127.0.0.1:18088/actuator/prometheus
 ```
 
 包括：
