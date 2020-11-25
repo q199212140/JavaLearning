@@ -1,4 +1,4 @@
-package io.spring2go.promdemo.httpsimulator;
+package com.sunil.sun.promdemo.httpsimulator;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

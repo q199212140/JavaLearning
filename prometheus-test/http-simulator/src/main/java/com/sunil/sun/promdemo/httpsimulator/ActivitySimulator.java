@@ -1,9 +1,7 @@
-package io.spring2go.promdemo.httpsimulator;
+package com.sunil.sun.promdemo.httpsimulator;
 
 import java.util.Random;
-
-import io.prometheus.client.Counter;
-import io.prometheus.client.Histogram;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ActivitySimulator implements Runnable {
 
@@ -15,25 +13,27 @@ public class ActivitySimulator implements Runnable {
 
     private volatile boolean shutdown = false;
 
+    @Autowired
+    SampleBean sampleBean;
 
     /**
      * 产生用于计数的数据
      */
-    private final Counter httpRequestsTotal = Counter.build()
-        .name("http_requests_total")
-        .help("Total number of http requests by response status code")
-        .labelNames("endpoint", "status")
-        .register();
+//    private final Counter httpRequestsTotal = Counter.build()
+//        .name("http_requests_total")
+//        .help("Total number of http requests by response status code")
+//        .labelNames("endpoint", "status")
+//        .register();
 
     /**
      * 产生用于画直方图的数据
      */
-    private final Histogram httpRequestDurationMs = Histogram.build()
-        .name("http_request_duration_milliseconds")
-        .help("Http request latency histogram")
-        .exponentialBuckets(25, 2, 7)
-        .labelNames("endpoint", "status")
-        .register();
+//    private final Histogram httpRequestDurationMs = Histogram.build()
+//        .name("http_request_duration_milliseconds")
+//        .help("Http request latency histogram")
+//        .exponentialBuckets(25, 2, 7)
+//        .labelNames("endpoint", "status")
+//        .register();
 
     /**
      * 有参模拟器构造方法
@@ -105,7 +105,7 @@ public class ActivitySimulator implements Runnable {
         return this.opts;
     }
 
-    public void simulateActivity() {
+    public void simulateActivity(SampleBean sampleBean) {
         //取当前设置
         int requestRate = this.opts.getRequestRate();
 
@@ -119,13 +119,13 @@ public class ActivitySimulator implements Runnable {
         for (int i = 0; i < nbRequests; i++) {
             String statusCode = this.giveStatusCode();
             String endpoint = this.giveEndpoint();
-            this.httpRequestsTotal.labels(endpoint, statusCode).inc();
+            sampleBean.increment(endpoint, statusCode);
 
             int latency = this.giveLatency(statusCode);
             if (this.spikeMode) {
                 latency *= 2;
             }
-            this.httpRequestDurationMs.labels(endpoint, statusCode).observe(latency);
+            //this.httpRequestDurationMs.labels(endpoint, statusCode).observe(latency);
 
         }
     }
@@ -243,9 +243,11 @@ public class ActivitySimulator implements Runnable {
     @Override
     public void run() {
         while (!shutdown) {
+            SampleBean sampleBean = ApplicationContextProvider.getBean(SampleBean.class);
+
             System.out.println("Simulator is running...");
-            this.simulateActivity();
             try {
+                this.simulateActivity(sampleBean);
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
@@ -253,4 +255,10 @@ public class ActivitySimulator implements Runnable {
             }
         }
     }
+
+//    private void addCount(String endpoint, String statusCode, int num) {
+//        Counter counter = this.customMeterRegistry.counter("test.server.counter", endpoint, statusCode);
+//        counter.increment(num);
+//        System.out.println(counter.measure());
+//    }
 }
