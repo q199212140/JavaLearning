@@ -121,10 +121,19 @@ public class ActivitySimulator implements Runnable {
             String endpoint = this.giveEndpoint();
             sampleBean.increment(endpoint, statusCode);
 
-            int latency = this.giveLatency(statusCode);
-            if (this.spikeMode) {
-                latency *= 2;
-            }
+
+            //计时
+            sampleBean.record(endpoint, statusCode).record(() -> {
+                int latency = this.giveLatency(statusCode);
+                if (this.spikeMode) {
+                    latency *= 2;
+                }
+                try {
+                    Thread.sleep(latency);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
             //this.httpRequestDurationMs.labels(endpoint, statusCode).observe(latency);
 
         }

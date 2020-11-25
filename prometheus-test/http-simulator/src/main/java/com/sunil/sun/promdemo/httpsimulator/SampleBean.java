@@ -11,6 +11,7 @@ package com.sunil.sun.promdemo.httpsimulator;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.binder.MeterBinder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +63,13 @@ public class SampleBean implements MeterBinder {
         String[] tags = new String[]{"endpoint", endpoint, "status", status};
         meterRegistry.counter("http_requests_total", tags).increment();
     }
+
+    public Timer record(String endpoint, String status) {
+        String[] tags = new String[]{"endpoint", endpoint, "status", status};
+        Timer timer = meterRegistry.timer("http_requests_record", tags);
+        return timer;
+    }
+
 
     public Counter getJob2Counter() {
         return this.job2Counter;
